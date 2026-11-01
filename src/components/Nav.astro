@@ -52,18 +52,31 @@ const links = [
     margin-inline: auto;
     padding: 0 9px 0 22px;
     border-radius: 999px;
-    background: rgb(14 19 34 / 0.62);
+    /* At the top of the page the nav sits directly on the hero: no pill. */
+    background: rgb(12 17 30 / 0);
+    -webkit-backdrop-filter: blur(0) saturate(1);
+    backdrop-filter: blur(0) saturate(1);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0),
+      0 0 0 1px rgb(214 224 255 / 0),
+      0 12px 32px -14px rgb(0 0 0 / 0);
+    transition:
+      background-color 0.5s var(--ease-out),
+      box-shadow 0.5s var(--ease-out),
+      -webkit-backdrop-filter 0.5s var(--ease-out),
+      backdrop-filter 0.5s var(--ease-out);
+  }
+
+  /* Once the page scrolls (or the mobile menu opens), the pill forms around it. */
+  .nav-shell[data-scrolled] .nav,
+  .nav[data-open] {
+    background: rgb(12 17 30 / 0.8);
     -webkit-backdrop-filter: blur(18px) saturate(1.4);
     backdrop-filter: blur(18px) saturate(1.4);
     box-shadow:
       inset 0 1px 0 rgb(255 255 255 / 0.07),
       0 0 0 1px rgb(214 224 255 / 0.09),
       0 12px 32px -14px rgb(0 0 0 / 0.7);
-    transition: background-color 0.4s var(--ease-out);
-  }
-
-  .nav-shell[data-scrolled] .nav {
-    background: rgb(12 17 30 / 0.84);
   }
 
   .brand {

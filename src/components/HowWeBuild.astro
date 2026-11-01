@@ -1,0 +1,153 @@
+---
+const steps = [
+  { n: '01', title: 'Find a Real Problem', body: 'Start from something small, clear, and worth fixing.' },
+  { n: '02', title: 'Build Fast', body: 'Make the simplest version that people can actually use.' },
+  { n: '03', title: 'Keep Improving', body: 'Learn from feedback and refine what matters most.' },
+];
+---
+<section class="how" id="how-we-build" aria-labelledby="how-title">
+  <div class="wrap">
+    <div class="section-head" data-reveal="head" data-reveal-group>
+      <h2 id="how-title">How We Build</h2>
+      <p>We start from small, real problems and shape them into simple, useful products.</p>
+    </div>
+
+    <ol class="steps" data-steps>
+      {steps.map((s, i) => (
+        <li class="step" style={`--s:${i}`}>
+          <span class="num" aria-hidden="true">{s.n}</span>
+          <h3>{s.title}</h3>
+          <p>{s.body}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .how {
+    padding-block: clamp(96px, 13vw, 168px) clamp(72px, 9vw, 120px);
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(28px, 4vw, 56px);
+    margin: clamp(48px, 6vw, 80px) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .step {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding-top: 28px;
+  }
+
+  /* The rule above each step draws left to right, in order: the process reads as a sequence. */
+  .step::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 1px;
+    background: var(--line-strong);
+    transform-origin: left;
+    transition: transform 1s var(--ease-out);
+    transition-delay: calc(var(--s) * 0.18s);
+  }
+
+  .num,
+  .step h3,
+  .step p {
+    transition:
+      opacity 0.8s var(--ease-out),
+      transform 0.8s var(--ease-out),
+      filter 0.8s var(--ease-out);
+    transition-delay: calc(0.15s + var(--s) * 0.18s);
+  }
+
+  .steps[data-armed]:not([data-inview]) .step::before {
+    transform: scaleX(0);
+  }
+
+  .steps[data-armed]:not([data-inview]) :is(.num, h3, p) {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  .steps[data-armed]:not([data-inview]) .num {
+    filter: blur(8px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .step::before {
+      transition: none;
+    }
+
+    .steps[data-armed]:not([data-inview]) .step::before {
+      transform: none;
+    }
+
+    .steps[data-armed]:not([data-inview]) :is(.num, h3, p) {
+      transform: none;
+      filter: none;
+    }
+  }
+
+  .num {
+    margin-bottom: 18px;
+    font-size: clamp(3.5rem, 6vw, 5.25rem);
+    line-height: 0.9;
+    font-weight: 300;
+    letter-spacing: -0.05em;
+    font-variant-numeric: tabular-nums;
+    color: var(--dust);
+  }
+
+  .step h3 {
+    font-size: 1.3125rem;
+    line-height: 1.25;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .step p {
+    max-width: 22rem;
+    color: var(--text-2);
+  }
+
+  @media (max-width: 760px) {
+    .steps {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .num {
+      margin-bottom: 8px;
+    }
+  }
+</style>
+
+<script>
+  const list = document.querySelector<HTMLElement>('[data-steps]');
+  if (list && 'IntersectionObserver' in window) {
+    const rect = list.getBoundingClientRect();
+    // Only arm the reveal when the list starts below the fold; content is visible by default.
+    if (rect.top > window.innerHeight) {
+      list.setAttribute('data-armed', '');
+      const io = new IntersectionObserver(
+        ([e]) => {
+          if (e.isIntersecting) {
+            list.setAttribute('data-inview', '');
+            io.disconnect();
+          }
+        },
+        { threshold: 0.3 },
+      );
+      io.observe(list);
+    }
+  }
+</script>

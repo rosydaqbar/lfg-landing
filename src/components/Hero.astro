@@ -1,0 +1,715 @@
+---
+import { Picture } from 'astro:assets';
+import hero from '../assets/hero-astronaut.png';
+import Ring from './Ring.astro';
+import { acronyms, contactHref } from '../data/site';
+---
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <Picture
+    src={hero}
+    formats={['avif', 'webp']}
+    widths={[828, 1280, 1672]}
+    sizes="(max-width: 760px) 260vw, 100vw"
+    alt="Watercolor illustration of an astronaut floating above Earth, working on a laptop beneath the Milky Way."
+    class="plate"
+    loading="eager"
+    fetchpriority="high"
+  />
+
+  <div class="stars" aria-hidden="true" data-stars></div>
+
+  <div class="content">
+    <h1 id="hero-title" class="title" aria-label="LFG">
+      <Ring side="back" />
+      <span class="letters" aria-hidden="true"><span style="--n:0">L</span><span style="--n:1">F</span><span style="--n:2">G</span></span>
+      <Ring side="front" />
+    </h1>
+
+    <p class="acronym" aria-label={`LFG stands for ${acronyms.map((a) => a.join(' ')).join(', or ')}`}>
+      <span class="reel" aria-hidden="true" data-reel>
+        {acronyms.map((words, i) => (
+          <span class="meaning" data-active={i === 0 ? '' : undefined}>
+            {words.map((w) => (
+              <span class="word"><b>{w[0]}</b>{w.slice(1)}</span>
+            ))}
+          </span>
+        ))}
+      </span>
+    </p>
+
+    <p class="lede">
+      We build small software products and useful tools for real problems. Simple ideas, carefully crafted, and shipped with intent.
+    </p>
+
+    <div class="actions">
+      <a class="btn btn--primary" href="#products">Our Products</a>
+      <a class="btn btn--secondary" href={contactHref}>Contact Us</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: max(100svh, 860px);
+    overflow: hidden;
+    background: #0c1320;
+    isolation: isolate;
+  }
+
+  .hero :global(picture),
+  .hero :global(.plate) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+
+  .hero :global(.plate) {
+    object-fit: cover;
+    object-position: 50% 100%;
+    /* melt Earth's lower edge into the night below */
+    -webkit-mask-image: linear-gradient(180deg, #000 82%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 82%, transparent 100%);
+    animation: settle 2.6s var(--ease-out) both;
+  }
+
+  @keyframes settle {
+    from {
+      transform: scale(1.045);
+      filter: brightness(0.85);
+    }
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: clamp(118px, 15vh, 150px) var(--gutter) 0;
+  }
+
+  .title {
+    font-size: clamp(5.5rem, 11vw, 8.5rem);
+    line-height: 0.84;
+    font-weight: 700;
+    letter-spacing: -0.06em;
+    /* optical: the negative tracking pulls the last glyph; rebalance */
+    padding-left: 0.06em;
+    color: var(--dust);
+    position: relative;
+    cursor: default;
+  }
+
+  .letters {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---------- Saturn ring (canvas, drawn by the script below) ---------- */
+  .title :global(.ring) {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 230%;
+    max-width: none;
+    aspect-ratio: 2.3 / 1;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .title :global(.ring--back) {
+    z-index: 0;
+  }
+
+  .title :global(.ring--front) {
+    z-index: 2;
+  }
+
+  /* ---------- Sky: twinkling stars and shooting stars ---------- */
+  .stars {
+    position: absolute;
+    inset: 0 0 30% 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .stars :global(.star) {
+    position: absolute;
+    width: var(--s);
+    height: var(--s);
+    margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2);
+    border-radius: 50%;
+    background: #fff;
+    box-shadow:
+      0 0 calc(var(--s) * 2) calc(var(--s) * 0.5) rgb(255 255 255 / 0.7),
+      0 0 calc(var(--s) * 7) calc(var(--s) * 1.5) rgb(160 170 255 / 0.35);
+    opacity: 0;
+    animation: twinkle var(--d) ease-in-out infinite;
+    animation-delay: var(--delay);
+  }
+
+  /* four-point glint, like the stars painted in the plate */
+  .stars :global(.star--glint)::before,
+  .stars :global(.star--glint)::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: calc(var(--s) * 11);
+    height: 1.5px;
+    border-radius: 1px;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.95) 50%, transparent);
+    transform: translate(-50%, -50%);
+  }
+
+  .stars :global(.star--glint)::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+
+  .stars[data-paused] :global(.star) {
+    animation-play-state: paused;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(0.3) rotate(0deg); }
+    35%, 65% { opacity: var(--o); transform: scale(1) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1.15) rotate(8deg); }
+  }
+
+  .stars :global(.meteor) {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--len);
+    height: 2px;
+    border-radius: 2px;
+    transform-origin: 100% 50%;
+    background: linear-gradient(90deg, rgb(185 172 216 / 0), rgb(185 172 216 / 0.35) 55%, rgb(220 228 255 / 0.95));
+    opacity: 0;
+  }
+
+  .stars :global(.meteor)::after {
+    content: '';
+    position: absolute;
+    right: -2px;
+    top: 50%;
+    width: 5px;
+    height: 5px;
+    margin-top: -2.5px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow:
+      0 0 8px 2px rgb(255 255 255 / 0.85),
+      0 0 22px 6px rgb(110 145 255 / 0.5);
+  }
+
+  /* Focal entrance: the wordmark condenses out of the night, letter by letter,
+     then the line, lede, and actions surface beneath it. */
+  .letters > span {
+    display: inline-block;
+    animation: condense 1s var(--ease-out) both;
+    animation-delay: calc(0.25s + var(--n) * 0.11s);
+  }
+
+  @keyframes condense {
+    from {
+      opacity: 0;
+      transform: translateY(0.14em) scale(1.06);
+      filter: blur(14px);
+    }
+  }
+
+  .acronym,
+  .lede,
+  .actions {
+    animation: surface 0.8s var(--ease-out) both;
+  }
+
+  .acronym { animation-delay: 0.75s; }
+  .lede { animation-delay: 0.85s; }
+  .actions { animation-delay: 0.95s; }
+
+  @keyframes surface {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+
+  .acronym {
+    margin-top: 14px;
+    height: 1.5em;
+    font-size: clamp(1rem, 1.5vw, 1.1875rem);
+    font-weight: 450;
+    letter-spacing: -0.01em;
+    color: var(--dust);
+  }
+
+  .reel {
+    display: grid;
+  }
+
+  .meaning {
+    grid-area: 1 / 1;
+    display: inline-flex;
+    justify-content: center;
+    gap: 0.32em;
+    opacity: 0;
+    transform: translateY(0.6em);
+    filter: blur(6px);
+    transition:
+      opacity 0.6s var(--ease-out),
+      transform 0.8s var(--ease-out),
+      filter 0.6s var(--ease-out);
+  }
+
+  .meaning[data-active] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  .meaning[data-leaving] {
+    opacity: 0;
+    transform: translateY(-0.6em);
+    filter: blur(6px);
+  }
+
+  .word b {
+    font-weight: 650;
+    color: #fff;
+  }
+
+  .lede {
+    max-width: 36rem;
+    margin-top: 22px;
+    font-size: clamp(1rem, 1.35vw, 1.125rem);
+    line-height: 1.6;
+    color: var(--text-2);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 30px;
+  }
+
+  @media (max-width: 760px) {
+    .hero {
+      min-height: max(100svh, 760px);
+    }
+
+    .hero :global(.plate) {
+      object-position: 50% 100%;
+    }
+
+    .lede {
+      max-width: 22rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero :global(.plate) {
+      animation: none;
+    }
+
+    .letters > span,
+    .acronym,
+    .lede,
+    .actions {
+      animation: fade 0.5s ease-out both;
+      animation-delay: 0s;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; }
+    }
+
+    .meaning {
+      transition: opacity 0.4s linear;
+      transform: none;
+      filter: none;
+    }
+
+    .meaning[data-leaving] {
+      transform: none;
+      filter: none;
+    }
+  }
+</style>
+
+<script>
+  const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rand = (a: number, b: number) => a + Math.random() * (b - a);
+
+  /* ---------- Sky: twinkling stars that reappear elsewhere, and shooting stars ---------- */
+  const field = document.querySelector<HTMLElement>('[data-stars]');
+  let skyVisible = true;
+
+  if (field && !calm) {
+    const count = window.innerWidth < 760 ? 14 : 26;
+
+    const place = (star: HTMLElement) => {
+      // Keep clear of the centered wordmark and copy column.
+      let x = rand(2, 98);
+      const y = rand(4, 96);
+      if (x > 32 && x < 68 && y < 80) x = x < 50 ? rand(2, 30) : rand(70, 98);
+      star.style.left = `${x}%`;
+      star.style.top = `${y}%`;
+    };
+
+    for (let i = 0; i < count; i++) {
+      const star = document.createElement('span');
+      const glint = Math.random() < 0.45;
+      star.className = glint ? 'star star--glint' : 'star';
+      star.style.setProperty('--s', `${glint ? rand(2.6, 3.6) : rand(1.8, 2.8)}px`);
+      star.style.setProperty('--o', `${rand(0.75, 1)}`);
+      star.style.setProperty('--d', `${rand(4, 7.5)}s`);
+      star.style.setProperty('--delay', `${rand(-7, 0)}s`);
+      place(star);
+      star.addEventListener('animationiteration', () => place(star));
+      field.appendChild(star);
+    }
+
+    const shoot = () => {
+      if (skyVisible && !document.hidden) {
+        const w = field.clientWidth;
+        const h = field.clientHeight;
+        const ltr = Math.random() < 0.5;
+        const len = rand(140, 240);
+        const dist = rand(380, 640);
+        const angle = rand(14, 32) * (Math.PI / 180);
+        const x0 = ltr ? rand(0.02, 0.55) * w : rand(0.45, 0.98) * w;
+        const y0 = rand(0.04, 0.4) * h;
+        const dx = Math.cos(angle) * dist * (ltr ? 1 : -1);
+        const dy = Math.sin(angle) * dist;
+        const deg = (Math.atan2(dy, dx) * 180) / Math.PI;
+
+        const m = document.createElement('span');
+        m.className = 'meteor';
+        m.style.setProperty('--len', `${len}px`);
+        field.appendChild(m);
+        // The tail's right end is the head; place the head on the path point.
+        const at = (x: number, y: number, s: number) =>
+          `translate(${x - len}px, ${y - 1}px) rotate(${deg}deg) scaleX(${s})`;
+        const anim = m.animate(
+          [
+            { transform: at(x0, y0, 0.2), opacity: 0 },
+            { transform: at(x0 + dx * 0.15, y0 + dy * 0.15, 1), opacity: 1, offset: 0.15 },
+            { transform: at(x0 + dx * 0.8, y0 + dy * 0.8, 1), opacity: 0.9, offset: 0.8 },
+            { transform: at(x0 + dx, y0 + dy, 0.4), opacity: 0 },
+          ],
+          { duration: rand(900, 1400), easing: 'cubic-bezier(0.3, 0, 0.6, 1)' },
+        );
+        anim.onfinish = () => m.remove();
+      }
+      window.setTimeout(shoot, rand(3500, 9000));
+    };
+    window.setTimeout(shoot, rand(1800, 3200));
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(([e]) => {
+        skyVisible = e.isIntersecting;
+        field.toggleAttribute('data-paused', !skyVisible);
+      }).observe(field);
+    }
+  }
+
+  /* ---------- Saturn ring: smooth gradient bands with a slow travelling sheen ---------- */
+  const title = document.querySelector<HTMLElement>('#hero-title');
+  const backCv = title?.querySelector<HTMLCanvasElement>('.ring--back');
+  const frontCv = title?.querySelector<HTMLCanvasElement>('.ring--front');
+  const bctx = backCv?.getContext('2d');
+  const fctx = frontCv?.getContext('2d');
+  const off = document.createElement('canvas');
+  const octx = off.getContext('2d');
+
+  if (title && backCv && frontCv && bctx && fctx && octx) {
+    const DUST = [185, 172, 216];
+    const BLUE = [74, 128, 255];
+    const TILT = 0.22;
+    const ROT = (-10 * Math.PI) / 180;
+    const R0 = 0.55; // inner edge (fraction of R)
+    const R1 = 1.03; // outer edge
+    const hasConic = 'createConicGradient' in octx;
+
+    // Radial band profile: [radius, opacity]. Faint C ring, bright B ring, Cassini gap,
+    // A ring with a thin Encke gap, then the narrow F ring.
+    const PROFILE: [number, number][] = [
+      [0.55, 0], [0.6, 0.12], [0.665, 0.2],
+      [0.69, 0.62], [0.75, 0.92], [0.82, 0.78],
+      [0.838, 0.06], [0.866, 0.06],
+      [0.885, 0.6], [0.94, 0.5], [0.962, 0.2], [0.972, 0.48], [0.99, 0.32], [0.998, 0.02],
+      [1.012, 0.55], [1.03, 0],
+    ];
+
+    const mix = (k: number) =>
+      [0, 1, 2].map((i) => Math.round(DUST[i] + (BLUE[i] - DUST[i]) * k)).join(',');
+
+    // Glow sprites, one per band colour: white core, tinted body, falling off to transparent.
+    const glow = [0, 0.25, 0.5, 0.75, 1].map((k) => {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const g2 = c.getContext('2d')!;
+      const rg = g2.createRadialGradient(32, 32, 0, 32, 32, 32);
+      rg.addColorStop(0, 'rgba(255,255,255,1)');
+      rg.addColorStop(0.1, 'rgba(255,255,255,0.95)');
+      rg.addColorStop(0.2, `rgba(${mix(k)},0.7)`);
+      rg.addColorStop(0.4, `rgba(${mix(k)},0.25)`);
+      rg.addColorStop(0.65, `rgba(${mix(k)},0.07)`);
+      rg.addColorStop(1, `rgba(${mix(k)},0)`);
+      g2.fillStyle = rg;
+      g2.fillRect(0, 0, 64, 64);
+      return c;
+    });
+
+    // dust and sparks riding the bands (never in the gaps): mostly fine specks, a few bright
+    const bandR = () => {
+      const u = Math.random();
+      if (u < 0.5) return rand(0.69, 0.82); // B ring
+      if (u < 0.85) return rand(0.885, 0.99); // A ring
+      return rand(0.6, 0.66); // C ring
+    };
+    const sparks = Array.from({ length: window.innerWidth < 760 ? 90 : 170 }, () => {
+      const big = Math.random() < 0.14;
+      return {
+        r: bandR(),
+        a: rand(0, Math.PI * 2),
+        s: big ? rand(1.3, 2) : rand(0.35, 1),
+        big,
+        ph: rand(0, Math.PI * 2),
+        tw: rand(0.8, 2),
+      };
+    });
+
+    let W = 0;
+    let H = 0;
+    let dpr = 1;
+    let box = { x: 0, y: 0, w: 0, h: 0 };
+    let shade = { x: 0, y: 0, r: 0, cutY: 0 };
+    const size = () => {
+      const r = backCv.getBoundingClientRect();
+      dpr = Math.min(2, window.devicePixelRatio || 1);
+      W = Math.round(r.width * dpr);
+      H = Math.round(r.height * dpr);
+      for (const c of [backCv, frontCv, off]) {
+        c.width = W;
+        c.height = H;
+      }
+      // the front box: the letters' horizontal span, from the ring's centre line down
+      const letters = title.querySelector<HTMLElement>('.letters')?.getBoundingClientRect();
+      if (letters) {
+        const x0 = Math.floor((letters.left - r.left) * dpr) - 2;
+        const x1 = Math.ceil((letters.right - r.left) * dpr) + 2;
+        const y0 = Math.round(H / 2);
+        box = { x: Math.max(0, x0), y: y0, w: Math.min(W, x1) - Math.max(0, x0), h: H - y0 };
+        // shadow: centred on the letters, wide and flat, only on the far side (above centre)
+        shade = {
+          x: (letters.left + letters.width / 2 - r.left) * dpr,
+          y: (letters.top + letters.height * 0.45 - r.top) * dpr,
+          r: letters.width * 0.72 * dpr,
+          cutY: y0 + Math.round(4 * dpr),
+        };
+      }
+    };
+    size();
+    new ResizeObserver(size).observe(backCv);
+
+    let p = 0; // presence 0..1
+    let target = 0;
+    let t = 0;
+    let last = 0;
+    let raf = 0;
+    const SHEEN_PERIOD = 16; // seconds for the light to travel once around the ring
+    const ORBIT = 0.07; // radians per second for the sparks: slow drift
+    const start = Math.PI * 0.85; // where the ring begins drawing itself
+
+    const ringToOffscreen = (R: number) => {
+      octx.setTransform(1, 0, 0, 1, 0, 0);
+      octx.globalCompositeOperation = 'source-over';
+      octx.clearRect(0, 0, W, H);
+      // tilt: rotate, then squash so circles become the ring's ellipses
+      octx.setTransform(Math.cos(ROT), Math.sin(ROT), -Math.sin(ROT) * TILT, Math.cos(ROT) * TILT, W / 2, H / 2);
+
+      const g = octx.createRadialGradient(0, 0, R * R0, 0, 0, R * R1);
+      for (const [r, a] of PROFILE) {
+        const k = (r - R0) / (R1 - R0);
+        g.addColorStop(Math.min(1, Math.max(0, k)), `rgba(${mix(Math.min(1, k * 1.15))},${a})`);
+      }
+      octx.beginPath();
+      octx.arc(0, 0, R * R1, 0, Math.PI * 2);
+      octx.arc(0, 0, R * R0, 0, Math.PI * 2, true);
+      octx.fillStyle = g;
+      octx.fill();
+
+      if (hasConic) {
+        // travelling sheen: brightness rises and falls around the ring
+        const phase = start + (t / SHEEN_PERIOD) * Math.PI * 2;
+        const sheen = octx.createConicGradient(phase, 0, 0);
+        sheen.addColorStop(0, 'rgba(0,0,0,1)');
+        sheen.addColorStop(0.12, 'rgba(0,0,0,0.72)');
+        sheen.addColorStop(0.5, 'rgba(0,0,0,0.42)');
+        sheen.addColorStop(0.88, 'rgba(0,0,0,0.72)');
+        sheen.addColorStop(1, 'rgba(0,0,0,1)');
+        octx.globalCompositeOperation = 'destination-in';
+        octx.fillStyle = sheen;
+        octx.fillRect(-W, -H / TILT, W * 2, (H * 2) / TILT);
+
+        // depth: the far side of the ring fades smoothly into the near side (no seam)
+        const depth = octx.createLinearGradient(0, -R * R1, 0, R * R1);
+        depth.addColorStop(0, 'rgba(0,0,0,0.45)');
+        depth.addColorStop(0.5, 'rgba(0,0,0,0.72)');
+        depth.addColorStop(1, 'rgba(0,0,0,1)');
+        octx.fillStyle = depth;
+        octx.fillRect(-W, -H / TILT, W * 2, (H * 2) / TILT);
+        octx.globalCompositeOperation = 'source-over';
+      }
+
+      // dust and sparks, with depth: near side larger and brighter, far side smaller and dimmer.
+      // Each is a soft glow sprite (white core → band colour → transparent), placed in screen
+      // space so it stays round.
+      octx.setTransform(1, 0, 0, 1, 0, 0);
+      octx.globalCompositeOperation = 'lighter';
+      const cr = Math.cos(ROT);
+      const sr = Math.sin(ROT);
+      for (const s of sparks) {
+        const sin = Math.sin(s.a);
+        const near = (sin + 1) / 2; // 0 far .. 1 near
+        const tw = 0.45 + 0.55 * Math.max(0, Math.sin(t * s.tw + s.ph));
+        const x = Math.cos(s.a) * R * s.r;
+        const y = sin * R * s.r * TILT;
+        const X = W / 2 + cr * x - sr * y;
+        const Y = H / 2 + sr * x + cr * y;
+        const k = Math.min(1, Math.max(0, (s.r - R0) / (R1 - R0)));
+        const sprite = glow[Math.min(glow.length - 1, Math.round(k * (glow.length - 1)))];
+        const d = s.s * dpr * (0.7 + 0.45 * near) * (s.big ? 9 : 6);
+        octx.globalAlpha = (s.big ? 1 : 0.7) * tw * (0.35 + 0.65 * near);
+        octx.drawImage(sprite, X - d / 2, Y - d / 2, d, d);
+      }
+      octx.globalAlpha = 1;
+      octx.globalCompositeOperation = 'source-over';
+    };
+
+    const draw = () => {
+      const R = W * 0.46;
+      ringToOffscreen(R);
+
+      for (const [ctx, isFront] of [[bctx, false], [fctx, true]] as const) {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, W, H);
+        ctx.save();
+        // Partition the pixels, never overlap them: the front canvas owns a pixel-aligned box
+        // over the letters below the ring's centre (where the near side crosses them);
+        // the back canvas owns everything else. No antialiased clip edge, so no seam.
+        ctx.beginPath();
+        if (isFront) {
+          ctx.rect(box.x, box.y, box.w, box.h);
+        } else {
+          ctx.rect(0, 0, W, H);
+          ctx.rect(box.x, box.y, box.w, box.h);
+        }
+        ctx.clip('evenodd');
+
+        const depth = 1;
+        // soft bloom underneath, then the crisp ring on top
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.filter = `blur(${7 * dpr}px)`;
+        ctx.globalAlpha = 0.75 * depth * p;
+        ctx.drawImage(off, 0, 0);
+        ctx.filter = 'none';
+        ctx.globalAlpha = depth * p;
+        ctx.drawImage(off, 0, 0);
+        ctx.globalAlpha = 1;
+
+        if (!isFront && shade.r > 0) {
+          // The letters' shadow on the far side of the ring: the ring darkens on a soft
+          // gradient where it passes behind the wordmark.
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(0, 0, W, shade.cutY);
+          ctx.clip();
+          ctx.globalCompositeOperation = 'destination-out';
+          ctx.setTransform(1, 0, 0, 0.5, shade.x, shade.y);
+          const sh = ctx.createRadialGradient(0, 0, 0, 0, 0, shade.r);
+          sh.addColorStop(0, 'rgba(0,0,0,0.85)');
+          sh.addColorStop(0.45, 'rgba(0,0,0,0.7)');
+          sh.addColorStop(0.75, 'rgba(0,0,0,0.3)');
+          sh.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = sh;
+          ctx.fillRect(-shade.r, -shade.r, shade.r * 2, shade.r * 2);
+          ctx.restore();
+        }
+
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.restore();
+      }
+    };
+
+    const frame = (now: number) => {
+      const dt = Math.min(0.05, (now - (last || now)) / 1000);
+      last = now;
+      if (!calm) {
+        t += dt;
+        for (const s of sparks) s.a += (ORBIT / Math.pow(s.r, 1.5)) * dt;
+      }
+      p += (target - p) * Math.min(1, dt * (target ? 2.2 : 4));
+      if (!target && p < 0.005) {
+        p = 0;
+        for (const ctx of [bctx, fctx]) {
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          ctx.clearRect(0, 0, W, H);
+        }
+        raf = 0;
+        last = 0;
+        return;
+      }
+      draw();
+      raf = requestAnimationFrame(frame);
+    };
+
+    const show = (on: boolean) => {
+      target = on ? 1 : 0;
+      if (on && !raf) size(); // re-measure: the letters may have moved since load
+      if (!raf) raf = requestAnimationFrame(frame);
+    };
+
+    title.addEventListener('pointerenter', (e) => {
+      if (e.pointerType === 'mouse') show(true);
+    });
+    title.addEventListener('pointerleave', () => show(false));
+    // Touch: a tap shows the ring for a few seconds.
+    title.addEventListener('pointerup', (e) => {
+      if (e.pointerType === 'mouse') return;
+      show(true);
+      window.setTimeout(() => show(false), 3500);
+    });
+  }
+
+  const reel =document.querySelector<HTMLElement>('[data-reel]');
+  const items = reel ? Array.from(reel.querySelectorAll<HTMLElement>('.meaning')) : [];
+  let i = 0;
+
+  if (items.length > 1) {
+    window.setInterval(() => {
+      if (document.hidden) return;
+      const prev = items[i];
+      i = (i + 1) % items.length;
+      const next = items[i];
+      prev.removeAttribute('data-active');
+      prev.setAttribute('data-leaving', '');
+      next.removeAttribute('data-leaving');
+      next.setAttribute('data-active', '');
+      window.setTimeout(() => prev.removeAttribute('data-leaving'), 800);
+    }, 2800);
+  }
+</script>

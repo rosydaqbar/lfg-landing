@@ -1,0 +1,205 @@
+---
+import Icon from './Icon.astro';
+import { contactHref } from '../data/site';
+
+const links = [
+  { href: '#products', label: 'Products' },
+  { href: '#how-we-build', label: 'How We Build' },
+  { href: '#contact', label: 'Contact' },
+];
+---
+<header class="nav-shell" data-nav>
+  <nav class="nav" aria-label="Main">
+    <a class="brand" href="#top" aria-label="LFG.ink home">
+      LFG<span>.ink</span>
+    </a>
+
+    <ul class="links" id="nav-links">
+      {links.map((l) => (
+        <li><a href={l.href}>{l.label}</a></li>
+      ))}
+    </ul>
+
+    <div class="end">
+      <a class="btn btn--primary btn--sm" href={contactHref}>Contact Us</a>
+      <button class="toggle" type="button" aria-expanded="false" aria-controls="nav-links" data-nav-toggle>
+        <span class="sr-only">Menu</span>
+        <Icon name="menu" class="i-menu" />
+        <Icon name="x" class="i-x" />
+      </button>
+    </div>
+  </nav>
+</header>
+
+<style>
+  .nav-shell {
+    position: fixed;
+    inset: 14px 0 auto;
+    z-index: 50;
+    padding-inline: 14px;
+    pointer-events: none;
+  }
+
+  .nav {
+    pointer-events: auto;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 16px;
+    max-width: 920px;
+    height: 58px;
+    margin-inline: auto;
+    padding: 0 9px 0 22px;
+    border-radius: 999px;
+    background: rgb(14 19 34 / 0.62);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    backdrop-filter: blur(18px) saturate(1.4);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.07),
+      0 0 0 1px rgb(214 224 255 / 0.09),
+      0 12px 32px -14px rgb(0 0 0 / 0.7);
+    transition: background-color 0.4s var(--ease-out);
+  }
+
+  .nav-shell[data-scrolled] .nav {
+    background: rgb(12 17 30 / 0.84);
+  }
+
+  .brand {
+    justify-self: start;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+
+  .brand span {
+    font-weight: 500;
+    color: var(--text-3);
+  }
+
+  .links {
+    display: flex;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .links a {
+    display: block;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 14.5px;
+    font-weight: 480;
+    color: var(--text-2);
+    transition: color 0.2s, background-color 0.2s;
+  }
+
+  .links a:hover {
+    color: var(--text);
+    background: rgb(214 224 255 / 0.06);
+  }
+
+  .end {
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .toggle {
+    display: none;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 0;
+    border-radius: 999px;
+    background: rgb(214 224 255 / 0.06);
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .toggle :global(svg) {
+    width: 18px;
+    height: 18px;
+  }
+
+  .toggle :global(.i-x),
+  .toggle[aria-expanded='true'] :global(.i-menu) {
+    display: none;
+  }
+
+  .toggle[aria-expanded='true'] :global(.i-x) {
+    display: block;
+  }
+
+  @media (max-width: 760px) {
+    .nav {
+      grid-template-columns: 1fr auto;
+      padding-left: 20px;
+    }
+
+    .toggle {
+      display: grid;
+    }
+
+    .links {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      padding: 8px;
+      border-radius: 24px;
+      background: #0d1322;
+      box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.06),
+        0 0 0 1px rgb(214 224 255 / 0.09),
+        0 18px 40px -16px rgb(0 0 0 / 0.8);
+      opacity: 0;
+      transform: translateY(-6px);
+      visibility: hidden;
+      transition:
+        opacity 0.25s var(--ease-out),
+        transform 0.35s var(--ease-out),
+        visibility 0s 0.35s;
+    }
+
+    .nav[data-open] .links {
+      opacity: 1;
+      transform: none;
+      visibility: visible;
+      transition:
+        opacity 0.25s var(--ease-out),
+        transform 0.35s var(--ease-out);
+    }
+
+    .links a {
+      padding: 12px 16px;
+      font-size: 16px;
+      border-radius: 16px;
+    }
+  }
+</style>
+
+<script>
+  const shell = document.querySelector<HTMLElement>('[data-nav]');
+  const nav = shell?.querySelector<HTMLElement>('.nav');
+  const toggle = shell?.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+
+  const setOpen = (open: boolean) => {
+    if (!nav || !toggle) return;
+    toggle.setAttribute('aria-expanded', String(open));
+    nav.toggleAttribute('data-open', open);
+  };
+
+  toggle?.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+  nav?.querySelectorAll('.links a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+  document.addEventListener('keydown', (e) => e.key === 'Escape' && setOpen(false));
+
+  const onScroll = () => shell?.toggleAttribute('data-scrolled', window.scrollY > 24);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+</script>

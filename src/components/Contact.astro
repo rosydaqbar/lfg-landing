@@ -1,0 +1,102 @@
+---
+import { Picture } from 'astro:assets';
+import milkyway from '../assets/contact-milkyway.png';
+import Icon from './Icon.astro';
+import { contactHref, site } from '../data/site';
+---
+<section class="contact" id="contact" aria-labelledby="contact-title">
+  <div class="wrap">
+    <div class="panel" data-reveal="open">
+      <Picture src={milkyway} formats={['avif', 'webp']} widths={[700]} sizes="100vw" alt="" class="sky" />
+      <div class="inner" data-reveal="rise" data-reveal-group>
+        <h2 id="contact-title">Want to build something with us?</h2>
+        <p>We build software, tools, and product ideas from small problems worth solving.</p>
+        <div class="actions">
+          <a class="btn btn--primary" href={contactHref}>
+            <Icon name="mail" />Contact Us
+          </a>
+          <a class="btn btn--secondary" href="#products">See Our Products</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact {
+    padding-block: clamp(48px, 7vw, 96px) clamp(56px, 7vw, 96px);
+  }
+
+  .panel {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    border-radius: clamp(24px, 3vw, 36px);
+    background: #0e1528;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.06),
+      0 0 0 1px var(--line);
+  }
+
+  .panel :global(picture),
+  .panel :global(.sky) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+
+  .panel :global(.sky) {
+    object-fit: cover;
+    /* the Milky Way band cropped from the hero plate (contact-milkyway.png) */
+    object-position: 50% 70%;
+    opacity: 0.9;
+  }
+
+  .panel[data-armed] :global(.sky) {
+    transition: transform 1.8s var(--ease-out);
+  }
+
+  .panel[data-armed]:not([data-shown]) :global(.sky) {
+    transform: scale(1.18);
+  }
+
+  .panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(70% 90% at 50% 50%, rgb(11 17 30 / 0.55), rgb(11 17 30 / 0.15));
+  }
+
+  .inner {
+    display: grid;
+    justify-items: center;
+    gap: 18px;
+    padding: clamp(64px, 9vw, 120px) var(--gutter);
+    text-align: center;
+  }
+
+  h2 {
+    max-width: 16ch;
+    font-size: clamp(2.25rem, 4.6vw, 3.75rem);
+    line-height: 1.02;
+    font-weight: 640;
+    letter-spacing: -0.04em;
+  }
+
+  p {
+    max-width: 30rem;
+    font-size: clamp(1.0625rem, 1.4vw, 1.1875rem);
+    color: #c3c8dc;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 14px;
+  }
+</style>

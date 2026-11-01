@@ -1,0 +1,199 @@
+---
+// LFG Tools: a Discord server sidebar with join-to-create voice rooms, and the LFG post
+// the bot keeps up to date. A new player joins the room and fills a slot. Facts from the README.
+import PvDefs from './PvDefs.astro';
+import Panel from './Panel.astro';
+
+const id = 'lt';
+const members = [
+  { name: 'aelita', c: '#6c7bd0', y: 128 },
+  { name: 'drew', c: '#8f81bb', y: 148 },
+  { name: 'kugel', c: '#5f8fb4', y: 168 },
+];
+---
+<svg class="pv pv-lfg" viewBox="0 0 480 285" aria-hidden="true">
+  <PvDefs id={id} />
+
+  <!-- server sidebar -->
+  <Panel id={id} x={22} y={22} w={176} h={240} r={16} back>
+    <text x="40" y="47" class="t t-strong t-sm">LFG Squad</text>
+    <path d="M180 41 l-4 4 -4 -4" class="lt-chev" />
+    <path d="M22 60 H 198" class="hair" />
+    <text x="40" y="78" class="t t-faint t-cap">VOICE CHANNELS</text>
+
+    <g class="lt-lobby">
+      <rect x="32" y="86" width="156" height="24" rx="7" class="lt-lobby-bg" />
+      <path d="M48 93 l-4 3.5 h-3 v4 h3 l4 3.5 z" class="lt-spk lt-spk--blue" />
+      <text x="58" y="102" class="t t-sm t-strong">Join to Create</text>
+      <path d="M174 93 v10 M169 98 h10" class="lt-plus" />
+    </g>
+
+    <path d="M48 117 l-4 3.5 h-3 v4 h3 l4 3.5 z" class="lt-spk" transform="translate(0 -3)" />
+    <text x="58" y="123" class="t t-sm t-body">Ranked grind</text>
+    <text x="186" y="123" class="t t-faint t-xxs" text-anchor="end">
+      <tspan class="lt-n3">3/5</tspan>
+    </text>
+    <text x="186" y="123" class="t t-blue t-xxs lt-n4" text-anchor="end">4/5</text>
+
+    {members.map((m, i) => (
+      <g>
+        <circle cx="66" cy={m.y + 6} r="7" fill={m.c} />
+        {i === 0 && <circle cx="66" cy={m.y + 6} r="9.5" class="lt-speak" />}
+        <text x="80" y={m.y + 10} class="t t-xs t-faint">{m.name}</text>
+      </g>
+    ))}
+    <g class="lt-you">
+      <circle cx="66" cy="194" r="7" fill="#fff" />
+      <circle cx="66" cy="194" r="9.5" class="lt-you-ring" />
+      <text x="80" y="198" class="t t-xs t-strong">you</text>
+    </g>
+
+    <path d="M48 213 l-4 3.5 h-3 v4 h3 l4 3.5 z" class="lt-spk" transform="translate(0 4)" />
+    <text x="58" y="227" class="t t-sm t-body">Chill corner</text>
+    <text x="186" y="227" class="t t-faint t-xxs" text-anchor="end">2</text>
+  </Panel>
+
+  <!-- the LFG post -->
+  <Panel id={id} x={206} y={58} w={256} h={176} r={14}>
+    <g transform="translate(6 0)">
+    <circle cx="222" cy="82" r="11" fill={`url(#${id}-blue)`} />
+    <path d="M216 78 h12 M216 82 h8 M216 86 h10" stroke="#fff" stroke-width="1.8" stroke-linecap="round" />
+    <text x="240" y="80" class="t t-strong t-xs">LFG Tools</text>
+    <rect x="290" y="71" width="24" height="12" rx="3" fill="#2860f0" />
+    <text x="302" y="80" class="t t-xxs t-white" text-anchor="middle">APP</text>
+    <text x="240" y="92" class="t t-faint t-xxs">Looking for group</text>
+
+    <text x="214" y="118" class="t t-strong t-md">Ranked grind</text>
+    <text x="214" y="133" class="t t-faint t-xs">Need 2 more · join the room to play</text>
+
+    <g transform="translate(214 146)">
+      {[0, 1, 2].map((s) => (
+        <circle cx={14 + s * 32} cy="14" r="13" fill={members[s].c} stroke="#161e35" stroke-width="2" />
+      ))}
+      <circle cx="110" cy="14" r="12.5" class="lt-slot" />
+      <circle cx="110" cy="14" r="13" fill="#fff" class="lt-slot-you" />
+      <circle cx="142" cy="14" r="12.5" class="lt-slot" />
+    </g>
+
+    <g transform="translate(214 190)">
+      <rect width="96" height="28" rx="14" fill={`url(#${id}-blue)`} />
+      <rect x="1" y="1" width="94" height="13" rx="7" fill={`url(#${id}-shine)`} />
+      <text x="48" y="18.5" class="t t-xs t-white" text-anchor="middle">Join room</text>
+    </g>
+    <g transform="translate(318 190)">
+      <rect width="72" height="28" rx="14" fill={`url(#${id}-slate)`} stroke="rgb(214 224 255 / 0.1)" />
+      <text x="36" y="18.5" class="t t-xs t-body" text-anchor="middle">My stats</text>
+    </g>
+    </g>
+  </Panel>
+</svg>
+
+<style>
+  .pv-lfg {
+    --loop: 6s;
+  }
+
+  .lt-chev {
+    fill: none;
+    stroke: var(--text-3);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+  }
+
+  .lt-lobby-bg {
+    fill: rgb(74 128 255 / 0.14);
+    stroke: rgb(110 145 255 / 0.35);
+  }
+
+  .lt-plus {
+    stroke: var(--blue-hi);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+  }
+
+  .lt-spk {
+    fill: var(--text-3);
+  }
+
+  .lt-spk--blue {
+    fill: var(--blue-hi);
+  }
+
+  .lt-speak {
+    fill: none;
+    stroke: var(--blue-hi);
+    stroke-width: 1.6;
+    animation: lt-speak 1.2s ease-in-out infinite;
+  }
+
+  @keyframes lt-speak {
+    50% { opacity: 0.2; }
+  }
+
+  /* the new player: appears in the lobby, then drops into the room */
+  .lt-lobby {
+    animation: lt-lobby var(--loop) var(--ease-out) infinite;
+  }
+
+  @keyframes lt-lobby {
+    0%, 8% { filter: none; }
+    14% { filter: brightness(1.5); }
+    24%, 100% { filter: none; }
+  }
+
+  .lt-you {
+    animation: lt-you var(--loop) var(--ease-out) infinite;
+  }
+
+  @keyframes lt-you {
+    0%, 22% { opacity: 0; transform: translateY(-8px); }
+    32%, 92% { opacity: 1; transform: none; }
+    100% { opacity: 0; }
+  }
+
+  .lt-you-ring {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 1.4;
+    opacity: 0.5;
+  }
+
+  .lt-n3 {
+    animation: lt-n3 var(--loop) linear infinite;
+  }
+
+  .lt-n4 {
+    animation: lt-n4 var(--loop) linear infinite;
+  }
+
+  @keyframes lt-n3 {
+    0%, 34% { opacity: 1; }
+    36%, 92% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes lt-n4 {
+    0%, 34% { opacity: 0; }
+    36%, 92% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  .lt-slot {
+    fill: none;
+    stroke: rgb(214 224 255 / 0.3);
+    stroke-width: 1.3;
+    stroke-dasharray: 3 3;
+  }
+
+  .lt-slot-you {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: lt-slot var(--loop) var(--ease-out) infinite;
+  }
+
+  @keyframes lt-slot {
+    0%, 38% { opacity: 0; transform: scale(0.4); }
+    46%, 92% { opacity: 1; transform: none; }
+    100% { opacity: 0; }
+  }
+</style>

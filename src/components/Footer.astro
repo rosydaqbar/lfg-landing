@@ -1,0 +1,196 @@
+---
+import { Picture } from 'astro:assets';
+import hills from '../assets/footer-hills.png';
+import Icon from './Icon.astro';
+import { contactHref, site } from '../data/site';
+
+const nav = [
+  { href: '#products', label: 'Products' },
+  { href: '#how-we-build', label: 'How We Build' },
+  { href: '#contact', label: 'Contact' },
+];
+---
+<footer class="footer">
+  <div class="wrap top">
+    <div class="brand">
+      <p class="mark">LFG</p>
+      <p class="line">A small studio building software, tools, and experiments with care.</p>
+      <p class="copy">© 2026 LFG.ink</p>
+    </div>
+
+    <nav class="col" aria-label="Footer">
+      <p class="label">Navigate</p>
+      <ul>{nav.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+    </nav>
+
+    <div class="col">
+      <p class="label">Say hi</p>
+      <ul>
+        <li><a href={contactHref}><Icon name="mail" />{site.contactEmail}</a></li>
+        <li><a href={site.github} target="_blank" rel="noopener"><Icon name="github" />GitHub</a></li>
+        {site.discord && <li><a href={site.discord} target="_blank" rel="noopener"><Icon name="discord" />Discord</a></li>}
+      </ul>
+    </div>
+  </div>
+
+  <div class="land">
+    <Picture
+      src={hills}
+      formats={['avif', 'webp']}
+      widths={[900, 1400, 2172]}
+      sizes="(max-width: 760px) 200vw, 100vw"
+      alt="Watercolor illustration of a person relaxing in a deck chair under a parasol on a grassy hill, looking out over rolling hills."
+      class="hills"
+      loading="lazy"
+    />
+  </div>
+</footer>
+
+<style>
+  .footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 0;
+    color: var(--day-ink);
+    background: var(--day-0);
+  }
+
+  .top {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr;
+    gap: 40px;
+    padding-top: clamp(64px, 8vw, 104px);
+  }
+
+  .mark {
+    font-size: 2.5rem;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+  }
+
+  .line {
+    margin-top: 14px;
+    max-width: 22rem;
+    color: var(--day-text-2);
+  }
+
+  .label {
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 560;
+    color: #6a7290;
+  }
+
+  ul {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .col a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    color: var(--day-ink);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 4px;
+    transition: text-decoration-color 0.2s;
+  }
+
+  .col a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .col a :global(svg) {
+    width: 16px;
+    height: 16px;
+  }
+
+  .footer :focus-visible {
+    outline-color: var(--blue);
+  }
+
+  .top {
+    position: relative;
+    z-index: 1;
+  }
+
+  .land {
+    position: relative;
+    margin-top: 8px;
+  }
+
+  .land :global(.hills) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2172 / 724;
+    object-fit: cover;
+    object-position: 22% 100%;
+  }
+
+  .copy {
+    margin-top: 20px;
+    font-size: 13px;
+    color: #6a7290;
+  }
+
+  .land {
+    overflow: hidden;
+  }
+
+  /* As the night sheet lifts, the hills settle up into place: landing after the descent. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .land :global(.hills) {
+        transform-origin: 30% 100%;
+        animation: land linear both;
+        animation-timeline: --night;
+        animation-range: exit 0% exit 55%;
+      }
+
+      .top {
+        animation: land-copy linear both;
+        animation-timeline: --night;
+        animation-range: exit 10% exit 55%;
+      }
+    }
+  }
+
+  @keyframes land {
+    from {
+      transform: translateY(14%) scale(1.06);
+      filter: saturate(0.6) brightness(0.92);
+    }
+  }
+
+  @keyframes land-copy {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+  }
+
+  @media (max-width: 760px) {
+    .top {
+      grid-template-columns: 1fr 1fr;
+      gap: 32px 24px;
+    }
+
+    .brand {
+      grid-column: 1 / -1;
+    }
+
+    .land {
+      margin-top: 0;
+    }
+
+    .land :global(.hills) {
+      aspect-ratio: 4 / 3;
+    }
+  }
+</style>

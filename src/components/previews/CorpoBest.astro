@@ -1,0 +1,172 @@
+---
+// corpo.best: the catalog of standout corporate homepages, rendered in LFG's night palette.
+// Filter chips step through sectors; the "View site" spotlight moves across the index.
+import PvDefs from './PvDefs.astro';
+import Panel from './Panel.astro';
+
+const id = 'cb';
+const chips = [
+  { label: 'All', w: 30 },
+  { label: 'Aerospace', w: 62 },
+  { label: 'Robotics', w: 56 },
+  { label: 'Mobility', w: 54 },
+  { label: 'Capital', w: 50 },
+];
+let cx = 0;
+const chipPos = chips.map((c) => {
+  const x = cx;
+  cx += c.w + 6;
+  return { ...c, x };
+});
+const chipRowW = cx - 6;
+---
+<svg class="pv pv-corpo" viewBox="0 0 480 285" aria-hidden="true">
+  <PvDefs id={id} />
+  <defs>
+    <linearGradient id="cb-mint" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3d6f6a" />
+      <stop offset="1" stop-color="#1e3442" />
+    </linearGradient>
+    <radialGradient id="cb-blob" cx="0.5" cy="0.4" r="0.6">
+      <stop offset="0" stop-color="#a9d6e8" />
+      <stop offset="1" stop-color="#5a7fc0" />
+    </radialGradient>
+    <linearGradient id="cb-car" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9a3b3f" />
+      <stop offset="1" stop-color="#5c2228" />
+    </linearGradient>
+  </defs>
+
+  <Panel id={id} x={30} y={18} w={420} h={256} r={14}>
+    <!-- browser chrome -->
+    <circle cx="48" cy="34" r="3.6" fill="#3a4466" />
+    <circle cx="60" cy="34" r="3.6" fill="#3a4466" />
+    <circle cx="72" cy="34" r="3.6" fill="#3a4466" />
+    <rect x="186" y="25" width="108" height="18" rx="9" fill="rgb(214 224 255 / 0.06)" />
+    <text x="240" y="37.6" class="t t-faint t-xxs" text-anchor="middle">corpo.best</text>
+    <path d="M30 50 H 450" class="hair" />
+
+    <!-- site nav pill -->
+    <g transform="translate(178 60)">
+      <rect width="124" height="24" rx="12" fill="rgb(214 224 255 / 0.05)" stroke="rgb(214 224 255 / 0.12)" />
+      <circle cx="13" cy="12" r="7.5" fill="#eceef6" />
+      <text x="13" y="14.8" class="t t-cb" text-anchor="middle">CB</text>
+      <text x="26" y="16" class="t t-strong t-xxs">corpo.best</text>
+      <rect x="74" y="4" width="44" height="16" rx="8" fill="#eceef6" />
+      <text x="96" y="15" class="t t-xxs t-dark" text-anchor="middle">Catalog</text>
+    </g>
+
+    <text x="240" y="108" class="t t-strong t-lg" text-anchor="middle">Standout Corporate Sites</text>
+    <text x="240" y="121" class="t t-faint t-xxs" text-anchor="middle">An independent index of authentic corporate homepages</text>
+
+    <!-- filter chips -->
+    <g transform={`translate(${240 - chipRowW / 2} 130)`}>
+      {chipPos.map((c) => (
+        <g>
+          <rect x={c.x} width={c.w} height="16" rx="8" fill="rgb(214 224 255 / 0.06)" />
+          <text x={c.x + c.w / 2} y="11" class="t t-xxs t-faint" text-anchor="middle">{c.label}</text>
+        </g>
+      ))}
+      {chipPos.map((c, i) => (
+        <g class="cb-chip" style={`--i:${i}`}>
+          <rect x={c.x} width={c.w} height="16" rx="8" fill="#eceef6" />
+          <text x={c.x + c.w / 2} y="11" class="t t-xxs t-dark" text-anchor="middle">{c.label}</text>
+        </g>
+      ))}
+    </g>
+
+    <!-- index -->
+    <g transform="translate(48 156)">
+      <g class="cb-site" style="--i:0">
+        <rect width="120" height="102" rx="9" fill="url(#cb-mint)" />
+        <circle cx="78" cy="56" r="26" fill="url(#cb-blob)" opacity="0.9" />
+        <circle cx="64" cy="66" r="14" fill="#c7a6d8" opacity="0.7" />
+        <rect x="10" y="12" width="40" height="6" rx="2" fill="rgb(255 255 255 / 0.7)" />
+        <rect x="10" y="24" width="30" height="6" rx="2" fill="rgb(255 255 255 / 0.7)" />
+        <rect x="10" y="80" width="44" height="3" rx="1.5" fill="rgb(255 255 255 / 0.35)" />
+        <rect x="10" y="87" width="34" height="3" rx="1.5" fill="rgb(255 255 255 / 0.35)" />
+        <rect width="120" height="102" rx="9" class="cb-ring" />
+        <g class="cb-view" transform="translate(70 6)">
+          <rect width="44" height="14" rx="7" fill="#fff" />
+          <text x="22" y="10" class="t t-dark t-tiny" text-anchor="middle">View site ↗</text>
+        </g>
+      </g>
+
+      <g class="cb-site" style="--i:1" transform="translate(132 0)">
+        <rect width="120" height="102" rx="9" fill="#0a0c12" />
+        <rect y="46" width="60" height="56" fill="#e9e6e1" />
+        <rect x="60" y="46" width="60" height="56" fill="url(#cb-car)" />
+        <rect x="70" y="58" width="40" height="18" rx="2" fill="#d7b46a" opacity="0.8" />
+        <path d="M66 92 q 10 -10 26 -8 q 14 2 22 8 z" fill="#1b1416" />
+        <rect x="8" y="62" width="40" height="5" rx="1" fill="#1b1416" />
+        <rect x="8" y="72" width="34" height="2.5" rx="1" fill="#8a8580" />
+        <rect x="8" y="77" width="30" height="2.5" rx="1" fill="#8a8580" />
+        <rect width="120" height="102" rx="9" class="cb-ring" />
+        <g class="cb-view" transform="translate(70 6)">
+          <rect width="44" height="14" rx="7" fill="#fff" />
+          <text x="22" y="10" class="t t-dark t-tiny" text-anchor="middle">View site ↗</text>
+        </g>
+      </g>
+
+      <g class="cb-site" style="--i:2" transform="translate(264 0)">
+        <rect width="120" height="102" rx="9" fill="#ecebe8" />
+        <rect x="34" y="8" width="52" height="8" rx="4" fill="#d9d8d4" />
+        <rect x="24" y="40" width="72" height="9" rx="1.5" fill="#1d1f24" />
+        <rect x="32" y="55" width="56" height="3" rx="1.5" fill="#8d8f96" />
+        <rect x="30" y="68" width="28" height="10" rx="5" fill="none" stroke="#1d1f24" />
+        <rect x="62" y="68" width="28" height="10" rx="5" fill="#2860f0" />
+        <rect width="120" height="102" rx="9" class="cb-ring" />
+        <g class="cb-view" transform="translate(70 6)">
+          <rect width="44" height="14" rx="7" fill="#1d1f24" />
+          <text x="22" y="10" class="t t-white t-tiny" text-anchor="middle">View site ↗</text>
+        </g>
+      </g>
+    </g>
+  </Panel>
+</svg>
+
+<style>
+  .pv-corpo {
+    --loop: 7.5s;
+  }
+
+  .cb-chip {
+    opacity: 0;
+    animation: cb-chip var(--loop) var(--ease-out) infinite;
+    animation-delay: calc(var(--i) * 1.5s);
+  }
+
+  @keyframes cb-chip {
+    0% { opacity: 0; }
+    3%, 18% { opacity: 1; }
+    21%, 100% { opacity: 0; }
+  }
+
+  .cb-site {
+    transition: none;
+  }
+
+  .cb-ring {
+    fill: none;
+    stroke: rgb(214 224 255 / 0.1);
+    stroke-width: 1;
+    animation: cb-ring 4.5s var(--ease-out) infinite;
+    animation-delay: calc(var(--i) * 1.5s);
+  }
+
+  @keyframes cb-ring {
+    0%, 33.4%, 100% { stroke: rgb(214 224 255 / 0.1); stroke-width: 1; }
+    5%, 30% { stroke: #4a80ff; stroke-width: 2; }
+  }
+
+  .cb-view {
+    opacity: 0;
+    animation: cb-view 4.5s var(--ease-out) infinite;
+    animation-delay: calc(var(--i) * 1.5s);
+  }
+
+  @keyframes cb-view {
+    0%, 33.4%, 100% { opacity: 0; }
+    6%, 30% { opacity: 1; }
+  }
+</style>

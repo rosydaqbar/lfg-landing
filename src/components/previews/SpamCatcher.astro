@@ -1,0 +1,159 @@
+---
+// Spam Catcher: an attachment burst lands in #general, is boxed as one incident,
+// and the bot posts its review card (timeout, AI Verdict, delete). Facts from the README.
+import PvDefs from './PvDefs.astro';
+import Panel from './Panel.astro';
+
+const id = 'sc';
+const tiles = [
+  ['#5b4f86', '#2e2a4f'],
+  ['#3f6f86', '#1f3a4f'],
+  ['#86505f', '#4a2735'],
+  ['#7a6a46', '#3f3522'],
+];
+---
+<svg class="pv pv-spam" viewBox="0 0 480 285" aria-hidden="true">
+  <PvDefs id={id} />
+  <defs>
+    {tiles.map(([a, b], i) => (
+      <linearGradient id={`sc-tile-${i}`} x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color={a} />
+        <stop offset="1" stop-color={b} />
+      </linearGradient>
+    ))}
+  </defs>
+
+  <!-- the channel, behind -->
+  <Panel id={id} x={22} y={26} w={262} h={232} r={16} back>
+    <text x="40" y="52" class="t t-faint">#</text>
+    <text x="52" y="52" class="t t-strong t-sm">general</text>
+    <path d="M22 66 H 284" class="hair" />
+
+    <circle cx="48" cy="90" r="11" fill="#5f6fb0" />
+    <text x="66" y="87" class="t t-strong t-xs">mika</text>
+    <text x="96" y="87" class="t t-faint t-xxs">today 21:04</text>
+    <rect x="66" y="94" width="150" height="6" rx="3" fill="#2b3456" />
+
+    <circle cx="48" cy="130" r="11" fill="#8a6fa8" />
+    <text x="66" y="127" class="t t-strong t-xs">new_member</text>
+    <text x="134" y="127" class="t t-faint t-xxs">today 21:05</text>
+
+    <g transform="translate(66 136)">
+      {tiles.map((_, i) => (
+        <g transform={`translate(${(i % 2) * 70} ${Math.floor(i / 2) * 46})`}>
+          <g class="sc-tile" style={`--t:${i}`}>
+            <rect width="64" height="40" rx="7" fill={`url(#sc-tile-${i})`} />
+            <path d="M8 33 l14-14 10 9 7-6 13 11z" fill="rgb(255 255 255 / 0.22)" />
+            <circle cx="48" cy="12" r="4.5" fill="rgb(255 255 255 / 0.3)" />
+          </g>
+        </g>
+      ))}
+      <rect x="-6" y="-6" width="146" height="98" rx="12" class="sc-trap" />
+      <text x="0" y="104" class="t t-blue t-xxs sc-trap-label">+2 more files</text>
+    </g>
+  </Panel>
+
+  <!-- the bot's review card, in front -->
+  <g class="sc-card">
+    <Panel id={id} x={226} y={64} w={234} h={182} r={14}>
+      <g transform="translate(-14 0)">
+      <circle cx="270" cy="88" r="11" fill={`url(#${id}-blue)`} />
+      <path d="M270 81 l6 2.2 v4.2 c0 4-6 6.6-6 6.6 s-6-2.6-6-6.6 v-4.2z" fill="#fff" />
+      <text x="288" y="86" class="t t-strong t-xs">Spam Catcher</text>
+      <rect x="364" y="77" width="24" height="12" rx="3" fill="#2860f0" />
+      <text x="376" y="86" class="t t-xxs t-white" text-anchor="middle">APP</text>
+      <text x="288" y="98" class="t t-faint t-xxs">Danger incident</text>
+
+      <text x="266" y="122" class="t t-strong t-md">Attachment burst</text>
+      <g class="sc-sev" transform="translate(404 111)">
+        <rect width="44" height="16" rx="8" fill="rgb(196 86 106 / 0.2)" stroke="rgb(232 138 153 / 0.45)" />
+        <text x="22" y="11.4" class="t t-xxs t-rose" text-anchor="middle">Danger</text>
+      </g>
+
+      <text x="266" y="144" class="t t-faint t-xxs">USER</text>
+      <text x="266" y="157" class="t t-xs t-body">new_member</text>
+      <text x="364" y="144" class="t t-faint t-xxs">BURST</text>
+      <text x="364" y="157" class="t t-xs t-body">6 files · 4 s</text>
+      <text x="266" y="178" class="t t-faint t-xxs">ACTION</text>
+      <text x="266" y="191" class="t t-xs t-body">Timed out 10 min</text>
+      <text x="364" y="178" class="t t-faint t-xxs">AI VERDICT</text>
+      <text x="364" y="191" class="t t-xs t-body sc-verdict">Scam image</text>
+
+      <g transform="translate(266 208)">
+        <rect width="104" height="26" rx="8" fill={`url(#${id}-rose)`} />
+        <rect x="1" y="1" width="102" height="12" rx="7" fill={`url(#${id}-shine)`} />
+        <text x="52" y="17" class="t t-xs t-white" text-anchor="middle">Delete messages</text>
+      </g>
+      <g transform="translate(378 208)">
+        <rect width="70" height="26" rx="8" fill={`url(#${id}-slate)`} stroke="rgb(214 224 255 / 0.1)" />
+        <text x="35" y="17" class="t t-xs t-body" text-anchor="middle">Dismiss</text>
+      </g>
+      </g>
+    </Panel>
+  </g>
+</svg>
+
+<style>
+  .pv-spam {
+    --loop: 7s;
+  }
+
+  .sc-tile {
+    animation: sc-tile var(--loop) var(--ease-out) infinite;
+    animation-delay: calc(var(--t) * 0.1s);
+  }
+
+  @keyframes sc-tile {
+    0% { opacity: 0; transform: translateY(-10px) scale(0.92); }
+    7%, 92% { opacity: 1; transform: none; }
+    100% { opacity: 0; }
+  }
+
+  .sc-trap {
+    fill: rgb(74 128 255 / 0.07);
+    stroke: var(--blue-hi);
+    stroke-width: 1.5;
+    stroke-dasharray: 5 4;
+    animation: sc-trap var(--loop) var(--ease-out) infinite;
+  }
+
+  .sc-trap-label {
+    animation: sc-trap var(--loop) var(--ease-out) infinite;
+  }
+
+  @keyframes sc-trap {
+    0%, 16% { opacity: 0; }
+    24%, 92% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  .sc-card {
+    animation: sc-card var(--loop) var(--ease-out) infinite;
+  }
+
+  @keyframes sc-card {
+    0%, 24% { opacity: 0; transform: translate(24px, 6px); }
+    36%, 92% { opacity: 1; transform: none; }
+    100% { opacity: 0; transform: translate(0, 4px); }
+  }
+
+  .sc-sev {
+    animation: sc-sev var(--loop) ease-in-out infinite;
+  }
+
+  @keyframes sc-sev {
+    0%, 40% { opacity: 0; }
+    46%, 92% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  .sc-verdict {
+    animation: sc-verdict var(--loop) linear infinite;
+  }
+
+  @keyframes sc-verdict {
+    0%, 52% { opacity: 0; }
+    56%, 92% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+</style>

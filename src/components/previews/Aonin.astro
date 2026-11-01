@@ -1,0 +1,151 @@
+---
+// Aonin: a menu-bar popover on the host Mac. Three machines on the LAN stream in, live levels,
+// one output. Facts from the README: LAN only, uncompressed 24-bit/48 kHz, ~15-30 ms buffering.
+import PvDefs from './PvDefs.astro';
+import Panel from './Panel.astro';
+
+const id = 'ao';
+const devices = [
+  { name: 'MacBook Pro', src: 'System audio', y: 104 },
+  { name: 'Studio Mac', src: 'System + mic', y: 144 },
+  { name: 'ThinkPad', src: 'System audio', y: 184 },
+];
+const bars = [0, 1, 2, 3, 4, 5];
+---
+<svg class="pv pv-aonin" viewBox="0 0 480 285" aria-hidden="true">
+  <PvDefs id={id} />
+
+  <!-- network: machines on the left feed the popover rows -->
+  {devices.map((d, i) => (
+    <g>
+      <g transform={`translate(26 ${d.y + 4})`} class="ao-mini">
+        <rect x="3" y="0" width="26" height="17" rx="3" />
+        <path d="M0 20.5 H 32" />
+      </g>
+      <path d={`M62 ${d.y + 14} C 84 ${d.y + 14}, 88 ${d.y + 14}, 118 ${d.y + 14}`} class="ao-wire" style={`--i:${i}`} />
+    </g>
+  ))}
+
+  <!-- output on the right -->
+  <path d="M362 238 C 392 238, 396 206, 414 200" class="ao-wire ao-wire--out" />
+  <g transform="translate(404 152)" class="ao-phones">
+    <path d="M6 34 V 26 a 22 22 0 0 1 44 0 V 34" class="ao-band" />
+    <rect x="0" y="30" width="14" height="24" rx="6" fill={`url(#${id}-blue)`} />
+    <rect x="42" y="30" width="14" height="24" rx="6" fill={`url(#${id}-blue)`} />
+  </g>
+
+  <Panel id={id} x={118} y={22} w={244} h={240} r={16}>
+    <!-- header -->
+    <g transform="translate(134 38)">
+      <rect width="26" height="26" rx="7" fill="#d9d8d6" />
+      {[0, 1, 2].map((r) => [0, 1, 2].map((c) => (
+        <circle cx={6.5 + c * 6.5} cy={6.5 + r * 6.5} r="2.1" fill={r === 1 && c === 1 ? '#2860f0' : '#8f8e8b'} />
+      )))}
+    </g>
+    <text x="170" y="50" class="t t-strong">Aonin</text>
+    <text x="170" y="63" class="t t-faint t-xs">Host · this Mac</text>
+    <g transform="translate(282 40)">
+      <rect width="66" height="20" rx="10" fill="rgb(74 128 255 / 0.16)" stroke="rgb(110 145 255 / 0.4)" />
+      <circle cx="12" cy="10" r="3.2" class="ao-live" />
+      <text x="21" y="13.8" class="t t-blue t-xs">Hosting</text>
+    </g>
+    <path d="M118 78 H 362" class="hair" />
+    <text x="134" y="95" class="t t-faint t-cap">CONNECTED · 3</text>
+
+    {devices.map((d, i) => (
+      <g>
+        <rect x="128" y={d.y} width="224" height="32" rx="9" fill={i === 0 ? 'rgb(214 224 255 / 0.05)' : 'none'} />
+        <g transform={`translate(138 ${d.y + 9})`} class="ao-icon">
+          <rect x="2" y="0" width="16" height="11" rx="2" />
+          <path d="M0 13.5 H 20" />
+        </g>
+        <text x="166" y={d.y + 14} class="t t-strong t-sm">{d.name}</text>
+        <text x="166" y={d.y + 26} class="t t-faint t-xs">{d.src}</text>
+        <g transform={`translate(300 ${d.y + 8})`}>
+          {bars.map((b) => (
+            <rect x={b * 7} y="0" width="4" height="16" rx="2" class="ao-bar" style={`--b:${b};--i:${i}`} />
+          ))}
+        </g>
+      </g>
+    ))}
+
+    <path d="M118 224 H 362" class="hair" />
+    <g transform="translate(136 232)" class="ao-icon">
+      <path d="M2 12 V 9 a 7 7 0 0 1 14 0 V 12" />
+      <rect x="0" y="10" width="4.5" height="7" rx="1.5" />
+      <rect x="13.5" y="10" width="4.5" height="7" rx="1.5" />
+    </g>
+    <text x="162" y="245" class="t t-strong t-sm">AirPods Pro</text>
+    <text x="350" y="245" class="t t-faint t-xs" text-anchor="end">18 ms · 24-bit / 48 kHz</text>
+  </Panel>
+</svg>
+
+<style>
+  .ao-mini rect,
+  .ao-mini path {
+    fill: none;
+    stroke: rgb(214 224 255 / 0.35);
+    stroke-width: 1.3;
+  }
+
+  .ao-wire {
+    fill: none;
+    stroke: rgb(110 145 255 / 0.55);
+    stroke-width: 1.5;
+    stroke-dasharray: 2 6;
+    stroke-linecap: round;
+    animation: ao-flow 1s linear infinite;
+    animation-delay: calc(var(--i, 0) * -0.3s);
+  }
+
+  .ao-wire--out {
+    stroke: var(--blue-hi);
+  }
+
+  @keyframes ao-flow {
+    to { stroke-dashoffset: -16; }
+  }
+
+  .ao-band {
+    fill: none;
+    stroke: var(--blue-hi);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+
+  .ao-icon rect,
+  .ao-icon path {
+    fill: none;
+    stroke: var(--text-2);
+    stroke-width: 1.4;
+    stroke-linecap: round;
+  }
+
+  .ao-live {
+    fill: var(--blue-hi);
+    animation: ao-live 1.6s ease-in-out infinite;
+  }
+
+  @keyframes ao-live {
+    50% { opacity: 0.35; }
+  }
+
+  .ao-bar {
+    fill: var(--blue-hi);
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: ao-level 0.9s ease-in-out infinite alternate;
+    animation-delay: calc(var(--b) * -0.17s + var(--i) * -0.41s);
+  }
+
+  .ao-bar:nth-child(n + 5) {
+    fill: #8f81bb;
+  }
+
+  @keyframes ao-level {
+    0% { transform: scaleY(0.2); }
+    35% { transform: scaleY(0.75); }
+    60% { transform: scaleY(0.4); }
+    100% { transform: scaleY(1); }
+  }
+</style>

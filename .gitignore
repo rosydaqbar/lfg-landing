@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.astro/
+.impeccable/config.local.json
+.impeccable/review/
+.impeccable/refs/
+
+# Local design notes (not needed to build the site)
+PRODUCT.md
+DESIGN.md
+.impeccable/

@@ -1,0 +1,7 @@
+---
+// Saturn ring around the LFG wordmark: a particle ring drawn on two canvases.
+// The back half sits behind the letters, the front half in front. Drawn by the Hero script.
+interface Props { side: 'back' | 'front' }
+const { side } = Astro.props;
+---
+<canvas class={`ring ring--${side}`} aria-hidden="true"></canvas>

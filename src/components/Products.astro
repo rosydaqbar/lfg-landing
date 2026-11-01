@@ -1,0 +1,322 @@
+---
+import Icon from './Icon.astro';
+import Aonin from './previews/Aonin.astro';
+import SpamCatcher from './previews/SpamCatcher.astro';
+import LfgTools from './previews/LfgTools.astro';
+import CorpoBest from './previews/CorpoBest.astro';
+import { Picture } from 'astro:assets';
+import milkyway from '../assets/contact-milkyway.png';
+import { products } from '../data/site';
+
+const skyPos: Record<string, string> = {
+  aonin: '20% 30%',
+  'spam-catcher': '80% 80%',
+  'lfg-tools': '60% 60%',
+  'corpo-best': '40% 90%',
+};
+---
+<section class="products" id="products" aria-labelledby="products-title">
+  <div class="wrap">
+    <div class="section-head" data-reveal="head" data-reveal-group>
+      <h2 id="products-title">What We're Building</h2>
+      <p>A few things we've built, explored, and continue to improve.</p>
+    </div>
+
+    <ul class="grid" data-reveal="rise" data-reveal-group>
+      {products.map((p) => (
+        <li class="card" data-product={p.id} data-preview>
+          <div class="preview" aria-hidden="true">
+            <Picture src={milkyway} formats={['avif', 'webp']} widths={[700]} sizes="540px" alt="" class="sky" style={`object-position: ${skyPos[p.id]}`} />
+            {p.id === 'aonin' && <Aonin />}
+            {p.id === 'spam-catcher' && <SpamCatcher />}
+            {p.id === 'lfg-tools' && <LfgTools />}
+            {p.id === 'corpo-best' && <CorpoBest />}
+          </div>
+
+          <div class="body">
+            <div class="title-row">
+              <h3>
+                <a href={p.href} {...(p.external ? { target: '_blank', rel: 'noopener' } : {})} class="stretch">
+                  {p.name}
+                </a>
+              </h3>
+              {p.soon && <span class="soon">Coming soon</span>}
+            </div>
+            <p class="kind">{p.kind}</p>
+            <p class="desc">{p.description}</p>
+            <span class="cta">
+              {p.cta}
+              <Icon name={p.external ? 'arrow-up-right' : 'arrow-right'} />
+            </span>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .products {
+    padding-block: clamp(72px, 9vw, 120px);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(16px, 2vw, 24px);
+    margin: clamp(48px, 6vw, 72px) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(180deg, var(--ink-1), #0e1426);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.05),
+      0 0 0 1px var(--line);
+    transition: box-shadow 0.35s var(--ease-out), transform 0.35s var(--ease-out);
+  }
+
+  /* Reveal: cards rise from depth in sequence; the preview inside settles from a closer crop. */
+  .grid[data-armed] .card {
+    transition:
+      opacity 0.9s var(--ease-out),
+      transform 1.2s var(--ease-out),
+      filter 0.9s var(--ease-out);
+    transition-delay: calc(var(--ri, 0) * 0.12s);
+  }
+
+  .grid[data-armed]:not([data-shown]) .card {
+    opacity: 0;
+    transform: translateY(56px) scale(0.97);
+    filter: blur(6px);
+  }
+
+  .grid[data-armed] .preview :global(.pv) {
+    transition: transform 1.6s var(--ease-out);
+    transition-delay: calc(var(--ri, 0) * 0.12s + 0.1s);
+  }
+
+  .grid[data-armed]:not([data-shown]) .preview :global(.pv) {
+    transform: scale(1.12);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .grid[data-armed]:not([data-shown]) .card {
+      transform: none;
+      filter: none;
+    }
+
+    .grid[data-armed]:not([data-shown]) .preview :global(.pv) {
+      transform: none;
+    }
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.07),
+      0 0 0 1px var(--line-strong),
+      0 24px 48px -28px rgb(0 0 0 / 0.9);
+  }
+
+  .card:focus-within {
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.07),
+      0 0 0 2px var(--blue-hi);
+  }
+
+  .preview {
+    position: relative;
+    margin: 10px 10px 0;
+    aspect-ratio: 480 / 285;
+    border-radius: calc(var(--radius-lg) - 10px);
+    overflow: hidden;
+    background:
+      radial-gradient(120% 90% at 50% 0%, #182040 0%, transparent 70%),
+      #0d1324;
+    box-shadow: inset 0 0 0 1px rgb(214 224 255 / 0.06);
+  }
+
+  /* ---------- shared SVG preview language ---------- */
+  .preview :global(.pv) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    font-family: var(--font);
+    transition: transform 0.6s var(--ease-out);
+  }
+
+  .card:hover .preview :global(.pv) {
+    transform: scale(1.02);
+  }
+
+  .preview :global(.hair) {
+    stroke: rgb(214 224 255 / 0.1);
+    stroke-width: 1;
+  }
+
+  /* SVG type ramp, shared by every scene */
+  .preview :global(.t) {
+    fill: var(--text-2);
+    font-size: 11px;
+    font-weight: 450;
+    letter-spacing: -0.005em;
+  }
+
+  .preview :global(.t-strong) { fill: var(--text); font-weight: 600; }
+  .preview :global(.t-body) { fill: #d3d7e6; font-weight: 500; }
+  .preview :global(.t-faint) { fill: var(--text-3); }
+  .preview :global(.t-blue) { fill: var(--blue-hi); font-weight: 600; }
+  .preview :global(.t-rose) { fill: #f0a7b4; font-weight: 600; }
+  .preview :global(.t-white) { fill: #fff; font-weight: 600; }
+  .preview :global(.t-dark) { fill: #141824; font-weight: 600; }
+  .preview :global(.t-lg) { font-size: 17px; font-weight: 650; letter-spacing: -0.03em; }
+  .preview :global(.t-md) { font-size: 14px; letter-spacing: -0.02em; }
+  .preview :global(.t-sm) { font-size: 11.5px; }
+  .preview :global(.t-xs) { font-size: 10px; }
+  .preview :global(.t-xxs) { font-size: 8.5px; }
+  .preview :global(.t-tiny) { font-size: 6.5px; }
+  .preview :global(.t-cap) { font-size: 8px; font-weight: 600; letter-spacing: 0.08em; }
+  .preview :global(.t-cb) { fill: #141824; font-size: 6px; font-weight: 800; }
+
+  /* The watercolor night behind every scene ties the cards to the hero plate. */
+  .preview :global(.sky) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.55;
+  }
+
+  .preview::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(90% 80% at 50% 45%, rgb(13 19 36 / 0.25), rgb(13 19 36 / 0.85));
+    pointer-events: none;
+  }
+
+  .preview :global(.pv) {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Loops play only while the card is on screen (set by the observer below). */
+  .card:not([data-playing]) .preview :global(*) {
+    animation-play-state: paused !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Freeze each loop on its most explanatory frame instead of playing it. */
+    .preview :global(*) {
+      animation-play-state: paused !important;
+      animation-delay: -3.4s !important;
+    }
+
+    .card:hover .preview :global(.pv) {
+      transform: none;
+    }
+  }
+
+  .body {
+    display: grid;
+    gap: 6px;
+    padding: 22px 26px 26px;
+    flex: 1;
+    align-content: start;
+  }
+
+  .title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .body h3 {
+    font-size: 1.375rem;
+    font-weight: 620;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+  }
+
+  .stretch::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+
+  .stretch:focus-visible {
+    outline: none;
+  }
+
+  .soon {
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 560;
+    color: var(--dust);
+    background: rgb(185 172 216 / 0.1);
+    box-shadow: inset 0 0 0 1px rgb(185 172 216 / 0.22);
+  }
+
+  .kind {
+    font-size: 13.5px;
+    color: var(--text-3);
+  }
+
+  .desc {
+    margin-top: 6px;
+    color: var(--text-2);
+    max-width: 32rem;
+  }
+
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    font-size: 14.5px;
+    font-weight: 560;
+    color: var(--blue-hi);
+    transition: gap 0.3s var(--ease-out);
+  }
+
+  .cta :global(svg) {
+    width: 16px;
+    height: 16px;
+  }
+
+  .card:hover .cta {
+    gap: 9px;
+  }
+
+  @media (max-width: 760px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+
+    .body {
+      padding: 20px 20px 22px;
+    }
+  }
+</style>
+
+<script>
+  const cards = document.querySelectorAll<HTMLElement>('[data-preview]');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => e.target.toggleAttribute('data-playing', e.isIntersecting)),
+      { threshold: 0.25 },
+    );
+    cards.forEach((c) => io.observe(c));
+  } else {
+    cards.forEach((c) => c.setAttribute('data-playing', ''));
+  }
+</script>

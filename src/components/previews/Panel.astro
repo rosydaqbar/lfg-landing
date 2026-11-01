@@ -1,0 +1,10 @@
+---
+// An embossed panel: gradient body, hairline edge, 1px top highlight, soft cast shadow.
+interface Props { id: string; x: number; y: number; w: number; h: number; r?: number; back?: boolean; class?: string }
+const { id, x, y, w, h, r = 14, back = false, class: cls } = Astro.props;
+---
+<g class={cls} filter={`url(#${id}-lift)`}>
+  <rect x={x} y={y} width={w} height={h} rx={r} fill={`url(#${id}-${back ? 'panel-back' : 'panel'})`} stroke="rgb(214 224 255 / 0.12)" />
+  <path d={`M${x + r} ${y + 0.75} H ${x + w - r}`} stroke="rgb(255 255 255 / 0.14)" stroke-width="1" />
+  <slot />
+</g>

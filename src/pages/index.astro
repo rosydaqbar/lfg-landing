@@ -1,0 +1,39 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import HowWeBuild from '../components/HowWeBuild.astro';
+import Products from '../components/Products.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+---
+<Base
+  title="LFG.ink: a small studio building useful software"
+  description="LFG is a small, independent software studio. We build small products and useful tools for real problems: Aonin, Spam Catcher, LFG Tools, and corpo.best."
+>
+  <Nav />
+  <main class="night">
+    <Hero />
+    <HowWeBuild />
+    <Products />
+    <Contact />
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  /* The night sheet lifts away on a rounded edge to uncover the daylight footer pinned beneath. */
+  :global(body) {
+    timeline-scope: --night;
+  }
+
+  .night {
+    view-timeline: --night block;
+    position: relative;
+    z-index: 1;
+    background: var(--ink-0);
+    border-radius: 0 0 clamp(28px, 4vw, 56px) clamp(28px, 4vw, 56px);
+    overflow: clip;
+    box-shadow: 0 18px 40px -24px rgb(11 17 30 / 0.35);
+  }
+</style>

@@ -4,10 +4,12 @@ import hills from '../assets/footer-hills.png';
 import Icon from './Icon.astro';
 import { contactHref, site } from '../data/site';
 
+// On the home page anchors scroll in place; on other pages they lead home first.
+const base = Astro.url.pathname === '/' ? '' : '/';
 const nav = [
-  { href: '#products', label: 'Products' },
-  { href: '#how-we-build', label: 'How We Build' },
-  { href: '#contact', label: 'Contact' },
+  { href: `${base}#products`, label: 'Products' },
+  { href: `${base}#how-we-build`, label: 'How We Build' },
+  { href: `${base}#contact`, label: 'Contact' },
 ];
 ---
 <footer class="footer">

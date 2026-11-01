@@ -2,15 +2,17 @@
 import Icon from './Icon.astro';
 import { contactHref } from '../data/site';
 
+// On the home page anchors scroll in place; on other pages they lead home first.
+const base = Astro.url.pathname === '/' ? '' : '/';
 const links = [
-  { href: '#products', label: 'Products' },
-  { href: '#how-we-build', label: 'How We Build' },
-  { href: '#contact', label: 'Contact' },
+  { href: `${base}#products`, label: 'Products' },
+  { href: `${base}#how-we-build`, label: 'How We Build' },
+  { href: `${base}#contact`, label: 'Contact' },
 ];
 ---
 <header class="nav-shell" data-nav>
   <nav class="nav" aria-label="Main">
-    <a class="brand" href="#top" aria-label="LFG.ink home">
+    <a class="brand" href={base ? "/" : "#top"} aria-label="LFG.ink home">
       LFG<span>.ink</span>
     </a>
 

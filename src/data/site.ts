@@ -17,7 +17,7 @@ I've got an idea (or a small problem worth solving) I'd like to talk about:
 
 `;
 
-export const contactHref = `mailto:${site.contactEmail}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
+export const contactHref =`mailto:${site.contactEmail}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
 
 export const acronyms = [
   ["Let's", 'F***ing', 'Go'],

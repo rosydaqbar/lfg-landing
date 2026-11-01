@@ -1,0 +1,141 @@
+---
+// Aonin's main window (dark theme), redrawn in SVG from Window.svelte and theme.css,
+// in the "host" demo state: three audio senders and one listener that would loop.
+const rows = [
+  { name: 'Studio MacBook Pro', sub: 'System audio + mic', mark: 'live', lat: '21.8 ms', vol: 0.72, level: 0.62 },
+  { name: 'Office MacBook', sub: 'System audio', mark: 'live', lat: '24.1 ms', vol: 0.55, level: 0.38 },
+  { name: 'Work Laptop', sub: 'Muted · System audio', mark: 'muted', lat: '18.0 ms', vol: 0.8, level: 0 },
+];
+const holes = 12;
+const nav = [
+  { label: 'Devices', y: 86, on: true, d: 'M1 2.5h9v6.5H1z M3.5 11.5h4 M11 5.5h2.5v6.5H11z' },
+  { label: 'Audio', y: 121, d: 'M1.5 6v2 M4 4v6 M6.5 1.5v11 M9 4v6 M11.5 6v2' },
+  { label: 'Network', y: 156, d: 'M5 1h4v3H5z M1 9.5h4v3H1z M9 9.5h4v3H9z M7 4v2.5 M3 9.5V6.5h8v3' },
+  { label: 'Advanced', y: 191, d: 'M1 3h12 M1 7h12 M1 11h12 M4 1.5v3 M9.5 5.5v3 M5.5 9.5v3' },
+  { label: 'About', y: 226, d: 'M7 6.5v3.5 M7 4.2v.1 M13 7A6 6 0 1 1 1 7a6 6 0 0 1 12 0z' },
+];
+---
+<svg class="ao-art ao-win" viewBox="0 0 860 470" role="img" aria-label="Preview of the Aonin window: a table of audio senders with level, latency, volume and mute, and another listener that can't be joined because it would loop your own audio back.">
+  <defs>
+    <clipPath id="win-clip"><rect width="860" height="470" rx="12" /></clipPath>
+  </defs>
+
+  <g clip-path="url(#win-clip)">
+    <rect width="860" height="470" fill="#212121" />
+
+    <!-- strip -->
+    <rect width="860" height="52" fill="#131313" />
+    <text x="20" y="31" class="w w-brand">Aonin</text>
+    <text x="70" y="31" class="w w-strip2">PC-Studio · Windows</text>
+    <circle cx="660" cy="26.5" r="4.5" fill="#f07a3a" />
+    <text x="840" y="31" class="w w-strip2" text-anchor="end">Listening · 3 audio senders</text>
+
+    <!-- side rail -->
+    <path d="M171.5 52 V 470" stroke="#353535" />
+    <rect x="10" y="68" width="151" height="34" rx="7" fill="#2c2c2c" />
+    {nav.map((n) => (
+      <g>
+        <path transform={`translate(20 ${n.y - 11})`} d={n.d} class={n.on ? 'w-ico w-ico-on' : 'w-ico'} />
+        <text x="45" y={n.y + 0.5} class={n.on ? 'w w-nav w-nav-on' : 'w w-nav'}>{n.label}</text>
+      </g>
+    ))}
+    <g transform="translate(21 443)" class="w-ico">
+      <path d="M6 1v5" /><path d="M10 3.3a5 5 0 1 1-8 0" />
+    </g>
+    <text x="42" y="454" class="w w-quit">Quit Aonin</text>
+
+    <!-- audio senders -->
+    <text x="200" y="100" class="w w-h2">Audio senders</text>
+    <text x="722" y="100" class="w w-label" text-anchor="end">Playing to USB DAC</text>
+    <rect x="736" y="82.5" width="96" height="28" rx="14" fill="none" stroke="#484847" />
+    <text x="784" y="100.5" class="w w-btn" text-anchor="middle">Stop listening</text>
+
+    <text x="224" y="129" class="w w-label">Device</text>
+    <text x="420" y="129" class="w w-label">Level</text>
+    <text x="604" y="129" class="w w-label" text-anchor="end">Latency</text>
+    <text x="621" y="129" class="w w-label">Volume</text>
+    <path d="M200 139.5 H 832" stroke="#353535" />
+
+    {rows.map((r, i) => {
+      const y0 = 139 + i * 52;
+      const cy = y0 + 26;
+      const fill = 131 * r.vol;
+      return (
+        <g>
+          {r.mark === 'live'
+            ? <circle cx="204" cy={cy} r="4" fill="#9bbe55" />
+            : <circle cx="204" cy={cy} r="3.25" fill="none" stroke="#a2a2a0" stroke-width="1.5" />}
+          <text x="224" y={y0 + 22} class="w w-name">{r.name}</text>
+          <text x="224" y={y0 + 39} class="w w-sub">{r.sub}</text>
+          <g data-meter data-level={r.level} data-muted={r.mark === 'muted' ? '' : undefined}>
+            {Array.from({ length: holes }, (_, j) => (
+              <circle cx={423 + j * 9} cy={cy} r="3" class={j < Math.round(r.level * holes) ? 'hole on' : 'hole'} />
+            ))}
+          </g>
+          <text x="604" y={y0 + 31} class="w w-lat" text-anchor="end">{r.lat}</text>
+          <rect x="621" y={cy - 2} width="131" height="4" rx="2" fill="#353535" />
+          <rect x="621" y={cy - 2} width={fill} height="4" rx="2" fill={r.mark === 'muted' ? '#a2a2a0' : '#e9e9e7'} />
+          <circle cx={621 + fill} cy={cy} r="8" fill="#2c2c2c" stroke="#484847" />
+          {r.mark === 'muted' ? (
+            <g>
+              <rect x="769" y={y0 + 12} width="72" height="28" rx="14" fill="#131313" />
+              <text x="805" y={y0 + 30.5} class="w w-btn w-btn-on" text-anchor="middle">Unmute</text>
+            </g>
+          ) : (
+            <g>
+              <rect x="769.5" y={y0 + 12.5} width="71" height="27" rx="13.5" fill="#2c2c2c" stroke="#484847" />
+              <text x="805" y={y0 + 30.5} class="w w-btn" text-anchor="middle">Mute</text>
+            </g>
+          )}
+          <path d={`M200 ${y0 + 52.5} H 832`} stroke="#353535" />
+        </g>
+      );
+    })}
+
+    <!-- other listeners: one would loop, so it is shown but can't be joined -->
+    <text x="200" y="336" class="w w-h2">Other listeners</text>
+    <circle cx="204" cy="378" r="4" fill="#e5584b" />
+    <text x="224" y="373" class="w w-name">Studio iMac</text>
+    <text x="224" y="390" class="w w-sub w-red">Joining would play your own audio back to you.</text>
+    <path d="M200 405.5 H 832" stroke="#353535" />
+  </g>
+</svg>
+
+<style>
+  .ao-win {
+    display: block;
+    width: 100%;
+    height: auto;
+    font-family: 'Hanken Grotesk Variable', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-feature-settings: 'tnum' 1;
+  }
+
+  .ao-win :global(.w) { fill: #e9e9e7; }
+  .ao-win :global(.w-brand) { fill: #e9e9e7; font-size: 14px; font-weight: 650; }
+  .ao-win :global(.w-strip2) { fill: #999997; font-size: 12px; letter-spacing: 0.03em; }
+  .ao-win :global(.w-nav) { font-size: 13px; font-weight: 450; }
+  .ao-win :global(.w-nav-on) { font-weight: 650; }
+  .ao-win :global(.w-quit) { fill: #a2a2a0; font-size: 12.5px; }
+  .ao-win :global(.w-h2) { font-size: 13.5px; font-weight: 650; }
+  .ao-win :global(.w-label) { fill: #a2a2a0; font-size: 11.5px; letter-spacing: 0.04em; }
+  .ao-win :global(.w-name) { font-size: 13px; font-weight: 600; }
+  .ao-win :global(.w-sub) { fill: #a2a2a0; font-size: 11.5px; letter-spacing: 0.03em; }
+  .ao-win :global(.w-red) { fill: #e5584b; }
+  .ao-win :global(.w-lat) { font-size: 13px; }
+  .ao-win :global(.w-btn) { font-size: 12px; letter-spacing: 0.03em; }
+  .ao-win :global(.w-btn-on) { fill: #e9e9e7; }
+
+  .ao-win :global(.w-ico) {
+    fill: none;
+    stroke: #a2a2a0;
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .ao-win :global(.w-ico-on) { stroke: #e9e9e7; }
+
+  .ao-win :global(.hole) { fill: #4a4a4a; transition: fill 90ms linear; }
+  .ao-win :global(.hole.on) { fill: #e9e9e7; }
+  .ao-win :global(.hole.flash) { fill: #f07a3a; transition: none; }
+</style>

@@ -1,0 +1,284 @@
+---
+import '@fontsource-variable/hanken-grotesk';
+import Base from '../layouts/Base.astro';
+import WindowArt from '../components/aonin/WindowArt.astro';
+import appIcon from '../assets/aonin/app-icon.svg?raw';
+---
+<Base
+  title="Aonin · Coming soon"
+  description="Aonin: hear every computer on your desk through one pair of headphones. Coming soon for Windows and macOS."
+>
+  <div class="page">
+    <main class="stage">
+      <span class="icon" set:html={appIcon} aria-hidden="true" />
+
+      <p class="soon"><i aria-hidden="true"></i>coming soon</p>
+      <h1>Aonin</h1>
+      <p class="tagline">Hear every computer on your desk through one pair of headphones.</p>
+      <p class="meta">Windows &amp; macOS · local network only</p>
+
+      <a class="btn" href="/">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" /></svg>
+        Back to home
+      </a>
+
+      <figure class="preview" data-ao-art>
+        <WindowArt />
+      </figure>
+    </main>
+
+    <footer class="foot">© 2026 LFG.ink</footer>
+  </div>
+</Base>
+
+<style>
+  /* Aonin's own language: Braun charcoal housing, graphite, one orange accent, Hanken Grotesk. */
+  :global(html),
+  :global(body) {
+    background: #131313;
+  }
+
+  .page {
+    --housing: #212121;
+    --strip: #131313;
+    --ink: #e9e9e7;
+    --ink-2: #a2a2a0;
+    --line-strong: #484847;
+    --orange: #f07a3a;
+    --orange-ink: #f39260;
+
+    min-height: 100svh;
+    overflow-x: clip;
+    display: flex;
+    flex-direction: column;
+    background:
+      radial-gradient(60% 45% at 50% 0%, rgb(255 255 255 / 0.05), transparent 70%),
+      var(--strip);
+    color: var(--ink);
+    font-family: 'Hanken Grotesk Variable', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-feature-settings: 'tnum' 1;
+  }
+
+  .page ::selection {
+    background: var(--orange);
+    color: #fff;
+  }
+
+  .page :focus-visible {
+    outline: 2px solid var(--orange);
+    outline-offset: 3px;
+  }
+
+  .stage {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: clamp(72px, 12vh, 128px) 20px 0;
+  }
+
+  .stage > :not(.preview) {
+    animation: rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .stage > :nth-child(2) { animation-delay: 0.06s; }
+  .stage > :nth-child(3) { animation-delay: 0.12s; }
+  .stage > :nth-child(4) { animation-delay: 0.18s; }
+  .stage > :nth-child(5) { animation-delay: 0.24s; }
+  .stage > :nth-child(6) { animation-delay: 0.3s; }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+
+  .icon {
+    display: block;
+    width: clamp(72px, 9vw, 96px);
+    filter: drop-shadow(0 16px 28px rgb(0 0 0 / 0.55));
+  }
+
+  .icon :global(svg) {
+    width: 100%;
+    height: auto;
+  }
+
+  .soon {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 32px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--ink-2);
+  }
+
+  .soon i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--orange);
+    animation: breathe 2.4s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    50% { opacity: 0.3; }
+  }
+
+  h1 {
+    margin-top: 10px;
+    font-size: clamp(3.5rem, 8vw, 5.75rem);
+    line-height: 0.95;
+    font-weight: 650;
+    letter-spacing: -0.045em;
+  }
+
+  .tagline {
+    margin-top: 18px;
+    max-width: 22ch;
+    font-size: clamp(1.25rem, 2.2vw, 1.625rem);
+    line-height: 1.25;
+    font-weight: 450;
+    letter-spacing: -0.015em;
+    color: var(--ink-2);
+    text-wrap: balance;
+  }
+
+  .meta {
+    margin-top: 14px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: #7a7a78;
+  }
+
+  /* Aonin's pill button: the one primary action, in orange */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 34px;
+    height: 40px;
+    padding: 0 20px 0 14px;
+    border-radius: 20px;
+    background: var(--orange);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: background 120ms cubic-bezier(0.16, 1, 0.3, 1), transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .btn svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .btn:hover {
+    background: var(--orange-ink);
+    transform: translateY(-1px);
+  }
+
+  .btn:active {
+    transform: none;
+  }
+
+  /* One preview, fading into the dark below */
+  .preview {
+    width: min(960px, 100%);
+    margin: clamp(56px, 8vw, 88px) 0 0;
+    -webkit-mask-image: linear-gradient(180deg, #000 30%, rgb(0 0 0 / 0.5) 62%, transparent 92%);
+    mask-image: linear-gradient(180deg, #000 30%, rgb(0 0 0 / 0.5) 62%, transparent 92%);
+    animation: surface 1.3s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+  }
+
+  .preview :global(.ao-win) {
+    border-radius: 12px;
+    box-shadow:
+      0 0 0 1px #3a3a3a,
+      inset 0 1px 0 rgb(255 255 255 / 0.06),
+      0 40px 80px -30px rgb(0 0 0 / 0.9);
+  }
+
+  @keyframes surface {
+    from {
+      opacity: 0;
+      transform: translateY(28px);
+    }
+  }
+
+  .foot {
+    padding: 28px 20px 32px;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: #6a6a68;
+  }
+
+  @media (max-width: 640px) {
+    /* keep the window legible: show its left part, cropped by the fade */
+    .preview {
+      align-self: flex-start;
+      margin-left: 4px;
+      width: 175%;
+      max-width: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stage > :not(.preview),
+    .preview {
+      animation: fade 0.5s ease-out both;
+    }
+
+    .soon i {
+      animation: none;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; }
+    }
+  }
+</style>
+
+<script>
+  /* The grille meters move like live audio; now and then one hole flashes orange for a
+     repaired packet, the way the real app does. */
+  const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const meters = Array.from(document.querySelectorAll<SVGGElement>('[data-meter]'));
+
+  if (!calm && meters.length) {
+    const rows = meters.map((m) => ({
+      holes: Array.from(m.querySelectorAll<SVGCircleElement>('circle')),
+      base: Number(m.dataset.level ?? 0),
+      level: Number(m.dataset.level ?? 0),
+      muted: m.hasAttribute('data-muted'),
+      seed: Math.random() * 10,
+    }));
+
+    let t = 0;
+    window.setInterval(() => {
+      if (document.hidden) return;
+      t += 0.09;
+      for (const r of rows) {
+        if (r.muted) continue;
+        const target = Math.max(0.05, Math.min(1, r.base + Math.sin(t * 0.9 + r.seed) * 0.18 + (Math.random() - 0.5) * 0.28));
+        r.level += (target - r.level) * 0.55;
+        const lit = Math.round(r.level * r.holes.length);
+        r.holes.forEach((h, i) => h.classList.toggle('on', i < lit));
+        if (Math.random() < 0.012 && lit > 1) {
+          const h = r.holes[lit - 1];
+          h.classList.add('flash');
+          window.setTimeout(() => h.classList.remove('flash'), 700);
+        }
+      }
+    }, 90);
+  }
+</script>

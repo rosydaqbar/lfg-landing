@@ -23,7 +23,7 @@ import appIcon from '../assets/aonin/app-icon.svg?raw';
       </a>
 
       <figure class="preview" data-ao-art>
-        <WindowArt />
+        <div class="win"><WindowArt /></div>
       </figure>
     </main>
 
@@ -199,12 +199,22 @@ import appIcon from '../assets/aonin/app-icon.svg?raw';
     animation: surface 1.3s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
   }
 
-  .preview :global(.ao-win) {
+  /* One owner for the rounded corner: the frame clips, and its edge is drawn on top at the
+     same radius, so no sliver of a second curve shows at the corners. */
+  .win {
+    position: relative;
     border-radius: 12px;
-    box-shadow:
-      0 0 0 1px #3a3a3a,
-      inset 0 1px 0 rgb(255 255 255 / 0.06),
-      0 40px 80px -30px rgb(0 0 0 / 0.9);
+    overflow: hidden;
+    box-shadow: 0 40px 80px -30px rgb(0 0 0 / 0.9);
+  }
+
+  .win::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px #3a3a3a;
+    pointer-events: none;
   }
 
   @keyframes surface {

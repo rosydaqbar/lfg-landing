@@ -233,23 +233,119 @@ a {
   font-size: 14px;
 }
 
+/* Primary: at rest, the plain blue pill. On hover it becomes a small piece of night sky:
+   a faint nebula drifts inside, two stars blink slowly out of step, a blue-violet halo
+   breathes around it, and a little dust floats just outside. --on fades all of it in. */
+@property --on { syntax: '<number>'; inherits: false; initial-value: 0; }
+@property --s1 { syntax: '<number>'; inherits: false; initial-value: 0.7; }
+@property --s2 { syntax: '<number>'; inherits: false; initial-value: 0.45; }
+@property --nx { syntax: '<percentage>'; inherits: false; initial-value: 30%; }
+@property --g { syntax: '<number>'; inherits: false; initial-value: 0.5; }
+
 .btn--primary {
   color: #fff;
-  background: linear-gradient(180deg, var(--blue-hi) 0%, var(--blue) 52%, var(--blue-lo) 100%);
+  background:
+    radial-gradient(circle at 18% 32%, rgb(255 255 255 / calc(var(--s1) * var(--on))) 0 0.8px, rgb(200 215 255 / calc(var(--s1) * var(--on) * 0.35)) 1.4px, transparent 3.5px),
+    radial-gradient(circle at 84% 66%, rgb(255 255 255 / calc(var(--s2) * var(--on))) 0 0.7px, rgb(200 215 255 / calc(var(--s2) * var(--on) * 0.3)) 1.2px, transparent 3px),
+    radial-gradient(55% 130% at var(--nx) -10%, rgb(168 120 255 / calc(var(--on) * 0.5)), transparent 70%),
+    radial-gradient(45% 120% at calc(100% - var(--nx)) 115%, rgb(90 200 255 / calc(var(--on) * 0.35)), transparent 70%),
+    linear-gradient(180deg, var(--blue-hi) 0%, var(--blue) 52%, var(--blue-lo) 100%);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.36),
     inset 0 -1px 0 rgb(8 20 80 / 0.35),
     0 1px 2px rgb(4 10 40 / 0.55),
-    0 10px 24px -10px rgb(40 96 240 / 0.75);
+    0 10px 24px -10px rgb(40 96 240 / 0.75),
+    0 0 18px -2px rgb(96 130 255 / calc(var(--g) * var(--on))),
+    0 0 40px -4px rgb(150 110 255 / calc(var(--g) * var(--on) * 0.6));
   text-shadow: 0 1px 1px rgb(8 20 80 / 0.35);
+  transition:
+    transform 0.25s var(--ease-out),
+    filter 0.25s var(--ease-out),
+    --on 0.6s var(--ease-out);
+  animation:
+    btn-star-a 4.6s ease-in-out infinite,
+    btn-star-b 6.2s ease-in-out -2.1s infinite,
+    btn-nebula 14s ease-in-out infinite alternate,
+    btn-halo 5.5s ease-in-out infinite;
+  animation-play-state: paused;
+}
+
+/* the dust: a few specks just outside the pill, drawn as shadows of one tiny dot */
+.btn--primary::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--dust);
+  box-shadow:
+    -96px -24px 0 0 currentColor,
+    -70px 30px 0 -0.5px #fff,
+    -112px 8px 0 0.3px currentColor,
+    -34px -33px 0 -0.5px #fff,
+    22px 34px 0 -0.4px currentColor,
+    64px -31px 0 0.2px #fff,
+    102px -12px 0 -0.3px currentColor,
+    92px 27px 0 0 #fff,
+    118px 10px 0 -0.5px currentColor,
+    -8px -38px 0 -0.6px currentColor;
+  filter: drop-shadow(0 0 2px rgb(185 172 216 / 0.9));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s var(--ease-out);
+  animation: btn-dust 7s ease-in-out infinite;
+  animation-play-state: paused;
+}
+
+.btn--sm.btn--primary::after {
+  scale: 0.72;
 }
 
 .btn--primary:hover {
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.4),
-    inset 0 -1px 0 rgb(8 20 80 / 0.35),
-    0 1px 2px rgb(4 10 40 / 0.55),
-    0 14px 30px -10px rgb(40 96 240 / 0.85);
+  --on: 1;
+  animation-play-state: running;
+}
+
+.btn--primary:hover::after {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+@keyframes btn-star-a {
+  0%, 100% { --s1: 0.15; }
+  45% { --s1: 0.95; }
+  60% { --s1: 0.8; }
+}
+
+@keyframes btn-star-b {
+  0%, 100% { --s2: 0.1; }
+  50% { --s2: 0.85; }
+}
+
+@keyframes btn-nebula {
+  from { --nx: 18%; }
+  to { --nx: 78%; }
+}
+
+@keyframes btn-halo {
+  0%, 100% { --g: 0.45; }
+  50% { --g: 0.8; }
+}
+
+/* dust drifts up a little and back, twinkling as it goes */
+@keyframes btn-dust {
+  0%, 100% { translate: -1px 0; filter: drop-shadow(0 0 2px rgb(185 172 216 / 0.9)) brightness(0.8); }
+  50% { translate: 1px -5px; filter: drop-shadow(0 0 3px rgb(185 172 216 / 1)) brightness(1.3); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn--primary,
+  .btn--primary::after {
+    animation: none;
+  }
 }
 
 .btn--primary:active {

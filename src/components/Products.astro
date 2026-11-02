@@ -25,6 +25,12 @@ const skyPos: Record<string, string> = {
     <ul class="grid" data-reveal="rise" data-reveal-group>
       {products.map((p) => (
         <li class="card" data-product={p.id} data-preview>
+          <span class="sky-glow" aria-hidden="true">
+            <span class="dust"></span>
+            <i class="star s1"></i>
+            <i class="star s2"></i>
+          </span>
+          <span class="rim" aria-hidden="true"></span>
           <div class="preview" aria-hidden="true">
             <Picture src={milkyway} formats={['avif', 'webp']} widths={[700]} sizes="540px" alt="" class="sky" style={`object-position: ${skyPos[p.id]}`} />
             {p.id === 'aonin' && <Aonin />}
@@ -225,6 +231,7 @@ const skyPos: Record<string, string> = {
   }
 
   .body {
+    position: relative;
     display: grid;
     gap: 6px;
     padding: 22px 26px 26px;
@@ -297,6 +304,95 @@ const skyPos: Record<string, string> = {
     gap: 9px;
   }
 
+  /* ---------- hover: a soft galaxy glow that follows the pointer ----------
+     It sits behind the text and the preview, so it only tints the card around them. */
+  .sky-glow,
+  .rim {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.6s var(--ease-out);
+  }
+
+  .sky-glow {
+    overflow: hidden;
+    background:
+      radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%), rgb(150 120 255 / 0.13), rgb(80 150 255 / 0.05) 45%, transparent 72%);
+  }
+
+  /* the rim lights up near the pointer */
+  .rim {
+    padding: 1px;
+    background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), rgb(185 172 216 / 0.55), rgb(110 140 255 / 0.2) 40%, transparent 70%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  }
+
+  .card:hover .sky-glow,
+  .card:hover .rim {
+    opacity: 1;
+  }
+
+  /* dust: faint specks across the lower half, drifting slowly */
+  .dust {
+    position: absolute;
+    left: 0;
+    top: 58%;
+    width: 1.5px;
+    height: 1.5px;
+    border-radius: 50%;
+    color: var(--dust);
+    box-shadow:
+      40px 30px 0 0 currentColor, 130px 120px 0 0 #fff, 210px 40px 0 -0.3px currentColor,
+      300px 150px 0 0 currentColor, 360px 70px 0 -0.2px #fff, 450px 20px 0 0 currentColor,
+      520px 110px 0 -0.3px currentColor, 90px 190px 0 0 #fff, 250px 200px 0 -0.2px currentColor,
+      420px 180px 0 0 #fff, 480px 210px 0 -0.3px currentColor, 170px 80px 0 -0.4px #fff;
+    opacity: 0.6;
+    animation: card-dust 9s ease-in-out infinite;
+    animation-play-state: paused;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 6px 1px rgb(200 215 255 / 0.7);
+    opacity: 0.2;
+    animation: card-star 4.8s ease-in-out infinite;
+    animation-play-state: paused;
+  }
+
+  .star.s1 { right: 34px; top: 63%; }
+  .star.s2 { right: 22%; bottom: 30px; animation-duration: 6.4s; animation-delay: -2.3s; }
+
+  .card:hover .dust,
+  .card:hover .star {
+    animation-play-state: running;
+  }
+
+  @keyframes card-dust {
+    0%, 100% { translate: 0 0; opacity: 0.45; }
+    50% { translate: 3px -6px; opacity: 0.8; }
+  }
+
+  @keyframes card-star {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dust,
+    .star {
+      animation: none;
+      opacity: 0.6;
+    }
+  }
+
   @media (max-width: 760px) {
     .grid {
       grid-template-columns: 1fr;
@@ -319,4 +415,18 @@ const skyPos: Record<string, string> = {
   } else {
     cards.forEach((c) => c.setAttribute('data-playing', ''));
   }
+
+  // The hover glow follows the pointer (mouse and pen only).
+  cards.forEach((card) => {
+    let frame = 0;
+    card.addEventListener('pointermove', (e) => {
+      if (e.pointerType === 'touch') return;
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+        card.style.setProperty('--my', `${e.clientY - r.top}px`);
+      });
+    });
+  });
 </script>

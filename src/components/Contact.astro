@@ -8,6 +8,12 @@ import { contactHref, site } from '../data/site';
   <div class="wrap">
     <div class="panel" data-reveal="open">
       <Picture src={milkyway} formats={['avif', 'webp']} widths={[700]} sizes="100vw" alt="" class="sky" />
+      <span class="sky-glow" aria-hidden="true">
+        <span class="dust"></span>
+        <i class="star s1"></i>
+        <i class="star s2"></i>
+      </span>
+      <span class="rim" aria-hidden="true"></span>
       <div class="inner" data-reveal="rise" data-reveal-group>
         <h2 id="contact-title">Want to build something with us?</h2>
         <p>We build software, tools, and product ideas from small problems worth solving.</p>
@@ -70,7 +76,96 @@ import { contactHref, site } from '../data/site';
     background: radial-gradient(70% 90% at 50% 50%, rgb(11 17 30 / 0.55), rgb(11 17 30 / 0.15));
   }
 
+  /* ---------- hover: the same soft galaxy as the product cards ---------- */
+  .sky-glow,
+  .rim {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.6s var(--ease-out);
+  }
+
+  .sky-glow {
+    overflow: hidden;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgb(150 120 255 / 0.14), rgb(80 150 255 / 0.05) 45%, transparent 72%);
+  }
+
+  .rim {
+    padding: 1px;
+    background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), rgb(185 172 216 / 0.6), rgb(110 140 255 / 0.2) 40%, transparent 70%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  }
+
+  .panel:hover .sky-glow,
+  .panel:hover .rim {
+    opacity: 1;
+  }
+
+  .dust {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1.5px;
+    height: 1.5px;
+    border-radius: 50%;
+    color: var(--dust);
+    box-shadow:
+      90px 80px 0 0 currentColor, 210px 360px 0 0 #fff, 300px 150px 0 -0.3px currentColor,
+      140px 470px 0 0 currentColor, 380px 440px 0 -0.2px #fff, 520px 60px 0 0 currentColor,
+      640px 470px 0 -0.3px currentColor, 760px 110px 0 0 #fff, 850px 400px 0 -0.2px currentColor,
+      930px 230px 0 0 currentColor, 1010px 90px 0 -0.3px #fff, 1080px 450px 0 0 currentColor,
+      60px 260px 0 -0.4px #fff, 1110px 300px 0 -0.4px #fff;
+    opacity: 0.6;
+    animation: contact-dust 10s ease-in-out infinite;
+    animation-play-state: paused;
+  }
+
+  .star {
+    position: absolute;
+    width: 2.5px;
+    height: 2.5px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 8px 1px rgb(200 215 255 / 0.8);
+    opacity: 0.2;
+    animation: contact-star 4.8s ease-in-out infinite;
+    animation-play-state: paused;
+  }
+
+  .star.s1 { left: 17%; top: 28%; }
+  .star.s2 { right: 15%; bottom: 22%; animation-duration: 6.4s; animation-delay: -2.3s; }
+
+  .panel:hover .dust,
+  .panel:hover .star {
+    animation-play-state: running;
+  }
+
+  @keyframes contact-dust {
+    0%, 100% { translate: 0 0; opacity: 0.45; }
+    50% { translate: 5px -8px; opacity: 0.85; }
+  }
+
+  @keyframes contact-star {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dust,
+    .star {
+      animation: none;
+      opacity: 0.6;
+    }
+  }
+
   .inner {
+    position: relative;
+    z-index: 1;
     display: grid;
     justify-items: center;
     gap: 18px;
@@ -100,3 +195,18 @@ import { contactHref, site } from '../data/site';
     margin-top: 14px;
   }
 </style>
+
+<script>
+  // The hover glow follows the pointer (mouse and pen only).
+  const panel = document.querySelector<HTMLElement>('.contact .panel');
+  let frame = 0;
+  panel?.addEventListener('pointermove', (e) => {
+    if (e.pointerType === 'touch') return;
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(() => {
+      const r = panel.getBoundingClientRect();
+      panel.style.setProperty('--mx', `${e.clientX - r.left}px`);
+      panel.style.setProperty('--my', `${e.clientY - r.top}px`);
+    });
+  });
+</script>

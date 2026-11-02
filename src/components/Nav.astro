@@ -12,6 +12,12 @@ const links = [
 ---
 <header class="nav-shell" data-nav>
   <nav class="nav" aria-label="Main">
+    <span class="sky-glow" aria-hidden="true">
+      <span class="dust"></span>
+      <i class="star s1"></i>
+      <i class="star s2"></i>
+    </span>
+    <span class="rim" aria-hidden="true"></span>
     <a class="brand" href={base ? "/" : "#top"} aria-label="LFG.ink home">
       LFG<span>.ink</span>
     </a>
@@ -54,6 +60,7 @@ const links = [
     margin-inline: auto;
     padding: 0 9px 0 22px;
     border-radius: 999px;
+    isolation: isolate;
     /* At the top of the page the nav sits directly on the hero: no pill. */
     background: rgb(12 17 30 / 0);
     -webkit-backdrop-filter: blur(0) saturate(1);
@@ -79,6 +86,92 @@ const links = [
       inset 0 1px 0 rgb(255 255 255 / 0.07),
       0 0 0 1px rgb(214 224 255 / 0.09),
       0 12px 32px -14px rgb(0 0 0 / 0.7);
+  }
+
+  /* ---------- scrolled pill, on hover: the same soft galaxy as the product cards ---------- */
+  .sky-glow,
+  .rim {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.6s var(--ease-out);
+  }
+
+  .sky-glow {
+    overflow: hidden;
+    background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgb(150 120 255 / 0.16), rgb(80 150 255 / 0.06) 45%, transparent 72%);
+  }
+
+  .rim {
+    padding: 1px;
+    background: radial-gradient(180px circle at var(--mx, 50%) var(--my, 50%), rgb(185 172 216 / 0.6), rgb(110 140 255 / 0.2) 40%, transparent 70%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  }
+
+  .nav-shell[data-scrolled] .nav:hover .sky-glow,
+  .nav-shell[data-scrolled] .nav:hover .rim {
+    opacity: 1;
+  }
+
+  .dust {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1.5px;
+    height: 1.5px;
+    border-radius: 50%;
+    color: var(--dust);
+    box-shadow:
+      70px 12px 0 0 currentColor, 160px 44px 0 0 #fff, 250px 18px 0 -0.3px currentColor,
+      330px 47px 0 0 currentColor, 520px 10px 0 -0.2px #fff, 600px 46px 0 0 currentColor,
+      690px 16px 0 -0.3px currentColor, 770px 42px 0 0 #fff, 860px 20px 0 -0.2px currentColor,
+      420px 50px 0 -0.4px #fff;
+    opacity: 0.55;
+    animation: nav-dust 9s ease-in-out infinite;
+    animation-play-state: paused;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 6px 1px rgb(200 215 255 / 0.7);
+    opacity: 0.2;
+    animation: nav-star 4.8s ease-in-out infinite;
+    animation-play-state: paused;
+  }
+
+  .star.s1 { left: 27%; top: 14px; }
+  .star.s2 { right: 24%; bottom: 13px; animation-duration: 6.4s; animation-delay: -2.3s; }
+
+  .nav:hover .dust,
+  .nav:hover .star {
+    animation-play-state: running;
+  }
+
+  @keyframes nav-dust {
+    0%, 100% { translate: 0 0; opacity: 0.4; }
+    50% { translate: 4px -3px; opacity: 0.75; }
+  }
+
+  @keyframes nav-star {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dust,
+    .star {
+      animation: none;
+      opacity: 0.6;
+    }
   }
 
   .brand {
@@ -213,6 +306,18 @@ const links = [
   toggle?.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
   nav?.querySelectorAll('.links a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
   document.addEventListener('keydown', (e) => e.key === 'Escape' && setOpen(false));
+
+  // The hover glow follows the pointer (mouse and pen only).
+  let frame = 0;
+  nav?.addEventListener('pointermove', (e) => {
+    if (e.pointerType === 'touch') return;
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(() => {
+      const r = nav.getBoundingClientRect();
+      nav.style.setProperty('--mx', `${e.clientX - r.left}px`);
+      nav.style.setProperty('--my', `${e.clientY - r.top}px`);
+    });
+  });
 
   const onScroll = () => shell?.toggleAttribute('data-scrolled', window.scrollY > 24);
   onScroll();

@@ -1,0 +1,185 @@
+---
+// How Aonin works, after docs/images/how-it-works.svg in the app's dark theme: three audio
+// senders stream over the LAN to one listener, which mixes them into one output.
+const senders = [
+  { y: 24, name: 'Studio MacBook Pro', sub: 'Audio sender · macOS', chips: [['System audio', true], ['Mic', true]], kind: 'mac', level: 7 },
+  { y: 144, name: 'Work Laptop', sub: 'Audio sender · Windows', chips: [['System audio', true], ['Mic off', false]], kind: 'pc', level: 9 },
+  { y: 264, name: 'Office MacBook', sub: 'Audio sender · macOS', chips: [['System audio', true], ['Mic off', false]], kind: 'mac', level: 5 },
+] as const;
+const LX = 640; // listener card left edge
+const paths = senders.map((s, i) => {
+  const y = s.y + 50;
+  const ty = 166 + i * 24;
+  return `M336 ${y} C 470 ${y}, 506 ${ty}, ${LX - 6} ${ty}`;
+});
+const wave = (x: number, y: number, w: number, seed: number) => {
+  let d = '';
+  for (let i = 0; i <= 38; i++) {
+    const px = x + (w / 38) * i;
+    const py = y + Math.sin(i * 0.55 + seed) * 3.6 * Math.sin((i / 38) * Math.PI) + Math.sin(i * 1.7 + seed) * 1.2;
+    d += `${i ? 'L' : 'M'}${px.toFixed(1)} ${py.toFixed(1)}`;
+  }
+  return d;
+};
+---
+<svg class="ao-flow" viewBox="0 0 960 388" role="img" aria-label="Diagram: three computers send their audio over your Wi-Fi or Ethernet, straight from device to device, to one listener, which mixes it and plays it on one pair of headphones. A packet lost on Wi-Fi is rebuilt from the next one.">
+  <defs>
+    <pattern id="flow-dots" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.1" fill="#2e2e2e" />
+    </pattern>
+    <linearGradient id="flow-screen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c1c1c" /><stop offset="1" stop-color="#121212" />
+    </linearGradient>
+    <g id="flow-pkt">
+      <rect x="-17" y="-6" width="20" height="12" rx="3" fill="#f07a3a" />
+      <rect x="-32" y="-6" width="14" height="12" rx="3" fill="#f07a3a" opacity="0.35" />
+    </g>
+  </defs>
+
+  <!-- the network floor -->
+  <rect x="352" y="66" width="272" height="266" rx="22" fill="url(#flow-dots)" />
+  <text x="488" y="30" class="f f-net" text-anchor="middle">Your Wi-Fi or Ethernet</text>
+  <text x="488" y="50" class="f f-label" text-anchor="middle">UDP, straight from device to device</text>
+
+  <!-- audio senders -->
+  {senders.map((s, i) => (
+    <g>
+      <rect x="0.5" y={s.y + 0.5} width="330" height="99" rx="14" fill="#212121" stroke="#353535" />
+      {s.kind === 'mac' ? (
+        <g>
+          <rect x="20" y={s.y + 22} width="76" height="48" rx="5" fill="#0e0e0e" stroke="#484847" />
+          <rect x="24" y={s.y + 26} width="68" height="40" rx="2.5" fill="url(#flow-screen)" />
+          <path d={wave(30, s.y + 46, 56, i * 2.1)} class="f-wave" />
+          <path d={`M12 ${s.y + 72} h92 l-5 6 h-82 z`} fill="#484847" />
+        </g>
+      ) : (
+        <g>
+          <rect x="20" y={s.y + 20} width="76" height="50" rx="4" fill="#0e0e0e" stroke="#484847" />
+          <rect x="24" y={s.y + 24} width="68" height="42" rx="2" fill="#1b2633" />
+          <rect x="31" y={s.y + 31} width="54" height="28" rx="3" fill="#2c2c2c" />
+          <rect x="31" y={s.y + 31} width="54" height="6" rx="3" fill="#353535" />
+          <path d={`M38 ${s.y + 43} l7 4.5 -7 4.5z`} fill="#e9e9e7" />
+          <rect x="50" y={s.y + 46} width="29" height="2.5" rx="1.25" fill="#484847" />
+          <rect x="50" y={s.y + 46} width="13" height="2.5" rx="1.25" fill="#f07a3a" class="f-progress" />
+          <rect x="14" y={s.y + 72} width="88" height="7" rx="2.5" fill="#484847" />
+        </g>
+      )}
+      <text x="118" y={s.y + 34} class="f f-name">{s.name}</text>
+      <text x="118" y={s.y + 52} class="f f-label">{s.sub}</text>
+      {s.chips.map(([label, on], j) => {
+        const w = label.length * 6.1 + 22;
+        const x = 118 + (j === 0 ? 0 : 98);
+        return (
+          <g>
+            <rect x={x + 0.5} y={s.y + 64.5} width={w} height="21" rx="10.5" fill={on ? '#131313' : '#2c2c2c'} stroke={on ? '#131313' : '#484847'} />
+            <text x={x + w / 2 + 0.5} y={s.y + 79} class={on ? 'f f-chip' : 'f f-chip f-off'} text-anchor="middle">{label}</text>
+          </g>
+        );
+      })}
+      <circle cx="330.5" cy={s.y + 50} r="5" fill="#212121" stroke="#484847" stroke-width="1.5" />
+    </g>
+  ))}
+
+  <!-- paths and packets -->
+  {paths.map((d, i) => (
+    <g>
+      <path d={d} class="f-path" />
+      {[0, 1, 2].map((k) => (
+        <use href="#flow-pkt">
+          <animateMotion dur={`${2.6 + i * 0.35}s`} begin={`${-(k * (2.6 + i * 0.35)) / 3 - i * 0.4}s`} repeatCount="indefinite" rotate="auto" path={d} keyPoints="0;1" keyTimes="0;1" calcMode="linear" />
+        </use>
+      ))}
+    </g>
+  ))}
+
+  <!-- a lost packet, rebuilt from the next one -->
+  <g transform="translate(488 190)">
+    <circle r="11" fill="#3a2725" stroke="#e5584b" stroke-width="1.5" />
+    <path d="M-4 -4 L4 4 M4 -4 L-4 4" stroke="#e5584b" stroke-width="1.8" stroke-linecap="round" />
+  </g>
+  <g transform="translate(488 300)">
+    <rect x="-104" y="-20" width="208" height="50" rx="10" fill="#212121" stroke="#353535" />
+    <text y="0" class="f f-small f-strong" text-anchor="middle">Lost on Wi-Fi?</text>
+    <text y="17" class="f f-small f-dim" text-anchor="middle">Rebuilt from the next packet</text>
+  </g>
+  <path d="M488 202 V 279" stroke="#484847" stroke-width="1.2" stroke-dasharray="2 4" />
+
+  <!-- listener -->
+  <rect x={LX + 0.5} y="64.5" width="319" height="259" rx="16" fill="#212121" stroke="#484847" />
+  <rect x={LX + 1} y="65" width="318" height="44" rx="15.5" fill="#131313" />
+  <rect x={LX + 1} y="90" width="318" height="19" fill="#131313" />
+  <text x={LX + 18} y="92" class="f f-name">PC-Studio</text>
+  <circle cx={LX + 220} cy="87.5" r="4" fill="#f07a3a" />
+  <text x={LX + 302} y="91.5" class="f f-label f-strip" text-anchor="end">Listening</text>
+  {[0, 1, 2].map((i) => (
+    <circle cx={LX - 0.5} cy={166 + i * 24} r="5" fill="#212121" stroke="#484847" stroke-width="1.5" />
+  ))}
+  <text x={LX + 18} y="138" class="f f-label">Mixing 3 audio senders</text>
+  <g data-meter data-level="0.7">
+    {Array.from({ length: 16 }, (_, j) => (
+      <circle cx={LX + 24 + j * 12.6} cy="160" r="3.6" class={j < 11 ? 'hole on' : 'hole'} />
+    ))}
+  </g>
+  <path d={`M${LX + 18} 186.5 H ${LX + 302}`} stroke="#353535" />
+  <text x={LX + 18} y="210" class="f f-label">Playing to</text>
+  <text x={LX + 18} y="230" class="f f-name">USB DAC</text>
+  <text x={LX + 302} y="230" class="f f-label" text-anchor="end">15–30 ms</text>
+
+  <!-- headphones -->
+  <g transform={`translate(${LX + 160} 276)`} class="f-phones">
+    <path d="M-30 10 v-8 a30 30 0 0 1 60 0 v8" />
+    <rect x="-36" y="4" width="13" height="26" rx="5" />
+    <rect x="23" y="4" width="13" height="26" rx="5" />
+  </g>
+</svg>
+
+<style>
+  .ao-flow {
+    display: block;
+    width: 100%;
+    height: auto;
+    font-family: 'Hanken Grotesk Variable', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-feature-settings: 'tnum' 1;
+    overflow: visible;
+  }
+
+  .ao-flow :global(.f) { fill: #e9e9e7; }
+  .ao-flow :global(.f-net) { font-size: 15px; font-weight: 650; }
+  .ao-flow :global(.f-label) { fill: #a2a2a0; font-size: 12px; letter-spacing: 0.03em; }
+  .ao-flow :global(.f-strip) { fill: #999997; }
+  .ao-flow :global(.f-name) { font-size: 14px; font-weight: 600; }
+  .ao-flow :global(.f-small) { font-size: 12px; }
+  .ao-flow :global(.f-strong) { font-weight: 650; }
+  .ao-flow :global(.f-dim) { fill: #a2a2a0; }
+  .ao-flow :global(.f-chip) { font-size: 11px; letter-spacing: 0.03em; }
+  .ao-flow :global(.f-off) { fill: #a2a2a0; }
+
+  .ao-flow :global(.f-wave) {
+    fill: none;
+    stroke: #f07a3a;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .ao-flow :global(.f-path) {
+    fill: none;
+    stroke: #484847;
+    stroke-width: 2;
+    stroke-dasharray: 1 7;
+    stroke-linecap: round;
+  }
+
+  .ao-flow :global(.f-phones) {
+    fill: none;
+    stroke: #e9e9e7;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+  }
+
+  .ao-flow :global(.f-phones rect) { fill: #2c2c2c; }
+
+  .ao-flow :global(.hole) { fill: #4a4a4a; transition: fill 90ms linear; }
+  .ao-flow :global(.hole.on) { fill: #e9e9e7; }
+  .ao-flow :global(.hole.flash) { fill: #f07a3a; transition: none; }
+</style>

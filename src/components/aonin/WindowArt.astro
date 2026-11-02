@@ -1,6 +1,7 @@
 ---
-// Aonin's main window (dark theme), redrawn in SVG from Window.svelte and theme.css,
-// in the "host" demo state: three audio senders and one listener that would loop.
+// Aonin's main window (dark theme), redrawn in SVG from Window.svelte, ClientRow.svelte and
+// theme.css, in a private "listening" state: three audio senders, one listener that would
+// loop (shown but not joinable) and one that can be joined.
 const rows = [
   { name: 'Studio MacBook Pro', sub: 'System audio + mic', mark: 'live', lat: '21.8 ms', vol: 0.72, level: 0.62 },
   { name: 'Office MacBook', sub: 'System audio', mark: 'live', lat: '24.1 ms', vol: 0.55, level: 0.38 },
@@ -8,97 +9,126 @@ const rows = [
 ];
 const holes = 12;
 const nav = [
-  { label: 'Devices', y: 86, on: true, d: 'M1 2.5h9v6.5H1z M3.5 11.5h4 M11 5.5h2.5v6.5H11z' },
-  { label: 'Audio', y: 121, d: 'M1.5 6v2 M4 4v6 M6.5 1.5v11 M9 4v6 M11.5 6v2' },
-  { label: 'Network', y: 156, d: 'M5 1h4v3H5z M1 9.5h4v3H1z M9 9.5h4v3H9z M7 4v2.5 M3 9.5V6.5h8v3' },
-  { label: 'Advanced', y: 191, d: 'M1 3h12 M1 7h12 M1 11h12 M4 1.5v3 M9.5 5.5v3 M5.5 9.5v3' },
-  { label: 'About', y: 226, d: 'M7 6.5v3.5 M7 4.2v.1 M13 7A6 6 0 1 1 1 7a6 6 0 0 1 12 0z' },
+  { label: 'Devices', y: 146, on: true, d: 'M1 2.5h9v6.5H1z M3.5 11.5h4 M11 5.5h2.5v6.5H11z' },
+  { label: 'Audio', y: 181, d: 'M1.5 6v2 M4 4v6 M6.5 1.5v11 M9 4v6 M11.5 6v2' },
+  { label: 'Network', y: 216, d: 'M5 1h4v3H5z M1 9.5h4v3H1z M9 9.5h4v3H9z M7 4v2.5 M3 9.5V6.5h8v3' },
+  { label: 'Advanced', y: 251, d: 'M1 3h12 M1 7h12 M1 11h12 M4 1.5v3 M9.5 5.5v3 M5.5 9.5v3' },
+  { label: 'About', y: 286, d: 'M7 6.5v3.5 M7 4.2v.1 M13 7A6 6 0 1 1 1 7a6 6 0 0 1 12 0z' },
 ];
+// Lucide-style glyphs on a 14px grid
+const ico = {
+  lock: 'M3 6.5h8a1 1 0 0 1 1 1v4.5a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7.5a1 1 0 0 1 1-1z M4.5 6.5V4.5a2.5 2.5 0 0 1 5 0v2',
+  copy: 'M5 5h7v7H5z M2 9V2h7',
+  globe: 'M13 7A6 6 0 1 1 1 7a6 6 0 0 1 12 0z M1 7h12 M7 1c1.8 1.7 2.6 3.7 2.6 6S8.8 11.3 7 13C5.2 11.3 4.4 9.3 4.4 7S5.2 2.7 7 1z',
+  vol: 'M6.5 2.5 3.5 5H1.5v4h2l3 2.5z M9 5a3 3 0 0 1 0 4 M10.8 3.2a5.5 5.5 0 0 1 0 7.6',
+  volx: 'M6.5 2.5 3.5 5H1.5v4h2l3 2.5z M9 5.2l3.4 3.6 M12.4 5.2 9 8.8',
+  swap: 'M1.5 4.5h10 M9 2l2.5 2.5L9 7 M12.5 9.5h-10 M5 7 2.5 9.5 5 12',
+};
 ---
-<svg class="ao-art ao-win" viewBox="0 0 860 470" role="img" aria-label="Preview of the Aonin window: a table of audio senders with level, latency, volume and mute, and another listener that can't be joined because it would loop your own audio back.">
-  <defs>
-    <clipPath id="win-clip"><rect width="860" height="470" /></clipPath>
-  </defs>
+<svg class="ao-art ao-win" viewBox="0 0 960 540" role="img" aria-label="Preview of the Aonin window while listening privately: a code for new devices, a table of three audio senders with level, latency, volume, mute and make-listener controls, and two other listeners on the network, one of which can't be joined because it would loop your own audio back.">
+  <rect width="960" height="540" fill="#212121" />
 
-  <g clip-path="url(#win-clip)">
-    <rect width="860" height="470" fill="#212121" />
+  <!-- strip -->
+  <rect width="960" height="52" fill="#131313" />
+  <text x="20" y="31" class="w w-brand">Aonin</text>
+  <text x="72" y="31" class="w w-strip2">Studio room · Windows</text>
+  <circle cx="752" cy="26.5" r="4.5" fill="#f07a3a" />
+  <text x="940" y="31" class="w w-strip2" text-anchor="end">Listening · 3 audio senders</text>
 
-    <!-- strip -->
-    <rect width="860" height="52" fill="#131313" />
-    <text x="20" y="31" class="w w-brand">Aonin</text>
-    <text x="70" y="31" class="w w-strip2">PC-Studio · Windows</text>
-    <circle cx="660" cy="26.5" r="4.5" fill="#f07a3a" />
-    <text x="840" y="31" class="w w-strip2" text-anchor="end">Listening · 3 audio senders</text>
+  <!-- private session -->
+  <rect x="20" y="68" width="28" height="28" rx="7" fill="#191919" />
+  <path transform="translate(27 74)" d={ico.lock} class="w-ico" />
+  <text x="60" y="79" class="w w-name">Private</text>
+  <text x="60" y="96" class="w w-sub">Devices already connected stay. New devices need the code: they type it under Join.</text>
+  <text x="708" y="89" class="w w-code" text-anchor="end">K7Q 4MZ</text>
+  <rect x="722.5" y="67.5" width="99" height="29" rx="14.5" fill="#2c2c2c" stroke="#484847" />
+  <path transform="translate(736 75)" d={ico.copy} class="w-ico w-ico-on" />
+  <text x="756" y="86" class="w w-btn">Copy code</text>
+  <rect x="831.5" y="67.5" width="108" height="29" rx="14.5" fill="#2c2c2c" stroke="#484847" />
+  <path transform="translate(845 75)" d={ico.globe} class="w-ico w-ico-on" />
+  <text x="865" y="86" class="w w-btn">Make public</text>
+  <path d="M0 112.5 H 960" stroke="#353535" />
 
-    <!-- side rail -->
-    <path d="M171.5 52 V 470" stroke="#353535" />
-    <rect x="10" y="68" width="151" height="34" rx="7" fill="#2c2c2c" />
-    {nav.map((n) => (
-      <g>
-        <path transform={`translate(20 ${n.y - 11})`} d={n.d} class={n.on ? 'w-ico w-ico-on' : 'w-ico'} />
-        <text x="45" y={n.y + 0.5} class={n.on ? 'w w-nav w-nav-on' : 'w w-nav'}>{n.label}</text>
-      </g>
-    ))}
-    <g transform="translate(21 443)" class="w-ico">
-      <path d="M6 1v5" /><path d="M10 3.3a5 5 0 1 1-8 0" />
+  <!-- side rail -->
+  <path d="M171.5 113 V 540" stroke="#353535" />
+  <rect x="10" y="128" width="151" height="34" rx="7" fill="#2c2c2c" />
+  {nav.map((n) => (
+    <g>
+      <path transform={`translate(20 ${n.y - 11})`} d={n.d} class={n.on ? 'w-ico w-ico-on' : 'w-ico'} />
+      <text x="45" y={n.y + 0.5} class={n.on ? 'w w-nav w-nav-on' : 'w w-nav'}>{n.label}</text>
     </g>
-    <text x="42" y="454" class="w w-quit">Quit Aonin</text>
-
-    <!-- audio senders -->
-    <text x="200" y="100" class="w w-h2">Audio senders</text>
-    <text x="722" y="100" class="w w-label" text-anchor="end">Playing to USB DAC</text>
-    <rect x="736" y="82.5" width="96" height="28" rx="14" fill="none" stroke="#484847" />
-    <text x="784" y="100.5" class="w w-btn" text-anchor="middle">Stop listening</text>
-
-    <text x="224" y="129" class="w w-label">Device</text>
-    <text x="420" y="129" class="w w-label">Level</text>
-    <text x="604" y="129" class="w w-label" text-anchor="end">Latency</text>
-    <text x="621" y="129" class="w w-label">Volume</text>
-    <path d="M200 139.5 H 832" stroke="#353535" />
-
-    {rows.map((r, i) => {
-      const y0 = 139 + i * 52;
-      const cy = y0 + 26;
-      const fill = 131 * r.vol;
-      return (
-        <g>
-          {r.mark === 'live'
-            ? <circle cx="204" cy={cy} r="4" fill="#9bbe55" />
-            : <circle cx="204" cy={cy} r="3.25" fill="none" stroke="#a2a2a0" stroke-width="1.5" />}
-          <text x="224" y={y0 + 22} class="w w-name">{r.name}</text>
-          <text x="224" y={y0 + 39} class="w w-sub">{r.sub}</text>
-          <g data-meter data-level={r.level} data-muted={r.mark === 'muted' ? '' : undefined}>
-            {Array.from({ length: holes }, (_, j) => (
-              <circle cx={423 + j * 9} cy={cy} r="3" class={j < Math.round(r.level * holes) ? 'hole on' : 'hole'} />
-            ))}
-          </g>
-          <text x="604" y={y0 + 31} class="w w-lat" text-anchor="end">{r.lat}</text>
-          <rect x="621" y={cy - 2} width="131" height="4" rx="2" fill="#353535" />
-          <rect x="621" y={cy - 2} width={fill} height="4" rx="2" fill={r.mark === 'muted' ? '#a2a2a0' : '#e9e9e7'} />
-          <circle cx={621 + fill} cy={cy} r="8" fill="#2c2c2c" stroke="#484847" />
-          {r.mark === 'muted' ? (
-            <g>
-              <rect x="769" y={y0 + 12} width="72" height="28" rx="14" fill="#131313" />
-              <text x="805" y={y0 + 30.5} class="w w-btn w-btn-on" text-anchor="middle">Unmute</text>
-            </g>
-          ) : (
-            <g>
-              <rect x="769.5" y={y0 + 12.5} width="71" height="27" rx="13.5" fill="#2c2c2c" stroke="#484847" />
-              <text x="805" y={y0 + 30.5} class="w w-btn" text-anchor="middle">Mute</text>
-            </g>
-          )}
-          <path d={`M200 ${y0 + 52.5} H 832`} stroke="#353535" />
-        </g>
-      );
-    })}
-
-    <!-- other listeners: one would loop, so it is shown but can't be joined -->
-    <text x="200" y="336" class="w w-h2">Other listeners</text>
-    <circle cx="204" cy="378" r="4" fill="#e5584b" />
-    <text x="224" y="373" class="w w-name">Studio iMac</text>
-    <text x="224" y="390" class="w w-sub w-red">Joining would play your own audio back to you.</text>
-    <path d="M200 405.5 H 832" stroke="#353535" />
+  ))}
+  <g transform="translate(21 505)" class="w-ico">
+    <path d="M6 1v5" /><path d="M10 3.3a5 5 0 1 1-8 0" />
   </g>
+  <text x="42" y="516" class="w w-quit">Quit Aonin</text>
+
+  <!-- audio senders -->
+  <text x="200" y="157" class="w w-h2">Audio senders</text>
+  <text x="824" y="157" class="w w-label" text-anchor="end">Playing to USB DAC</text>
+  <rect x="836.5" y="139.5" width="103" height="28" rx="14" fill="none" stroke="#484847" />
+  <text x="888" y="157.5" class="w w-btn" text-anchor="middle">Stop listening</text>
+
+  <text x="224" y="187" class="w w-label">Device</text>
+  <text x="403" y="187" class="w w-label">Level</text>
+  <text x="598" y="187" class="w w-label" text-anchor="end">Latency</text>
+  <text x="614" y="187" class="w w-label">Volume</text>
+  <path d="M200 197.5 H 940" stroke="#353535" />
+
+  {rows.map((r, i) => {
+    const y0 = 197 + i * 54;
+    const cy = y0 + 27;
+    const fill = 100 * r.vol;
+    const muted = r.mark === 'muted';
+    return (
+      <g>
+        {muted
+          ? <circle cx="204" cy={cy} r="3.25" fill="none" stroke="#a2a2a0" stroke-width="1.5" />
+          : <circle cx="204" cy={cy} r="4" fill="#9bbe55" />}
+        <text x="224" y={y0 + 23} class="w w-name">{r.name}</text>
+        <text x="224" y={y0 + 40} class="w w-sub">{r.sub}</text>
+        <g data-meter data-level={r.level} data-muted={muted ? '' : undefined}>
+          {Array.from({ length: holes }, (_, j) => (
+            <circle cx={407 + j * 9} cy={cy} r="3" class={j < Math.round(r.level * holes) ? 'hole on' : 'hole'} />
+          ))}
+        </g>
+        <text x="598" y={y0 + 31.5} class="w w-lat" text-anchor="end">{r.lat}</text>
+        <rect x="614" y={cy - 2} width="100" height="4" rx="2" fill="#353535" />
+        <rect x="614" y={cy - 2} width={fill} height="4" rx="2" fill={muted ? '#5a5a58' : '#e9e9e7'} />
+        <circle cx={614 + fill} cy={cy} r="7.5" fill={muted ? '#262626' : '#2c2c2c'} stroke="#484847" />
+        {muted ? (
+          <g>
+            <circle cx="742" cy={cy} r="14" fill="#131313" />
+            <path transform={`translate(735 ${cy - 7})`} d={ico.volx} class="w-ico w-ico-on" />
+          </g>
+        ) : (
+          <g>
+            <circle cx="742" cy={cy} r="13.5" fill="#2c2c2c" stroke="#484847" />
+            <path transform={`translate(735 ${cy - 7})`} d={ico.vol} class="w-ico w-ico-on" />
+          </g>
+        )}
+        <g opacity="0.45">
+          <rect x="816.5" y={cy - 13.5} width="123" height="27" rx="13.5" fill="#2c2c2c" stroke="#484847" />
+          <path transform={`translate(832 ${cy - 7})`} d={ico.swap} class="w-ico w-ico-on" />
+          <text x="852" y={cy + 4} class="w w-btn">Make listener</text>
+        </g>
+        <path d={`M200 ${y0 + 54.5} H 940`} stroke="#353535" />
+      </g>
+    );
+  })}
+
+  <!-- other listeners -->
+  <text x="200" y="400" class="w w-h2">Other listeners</text>
+  <circle cx="204" cy="436" r="4" fill="#e5584b" />
+  <text x="224" y="431" class="w w-name">Studio iMac</text>
+  <text x="224" y="448" class="w w-sub w-red">Joining would play your own audio back to you.</text>
+  <path d="M200 462.5 H 940" stroke="#353535" />
+  <circle cx="204" cy="488" r="4" fill="#9bbe55" />
+  <text x="224" y="483" class="w w-name">Living Room PC</text>
+  <text x="224" y="500" class="w w-sub">Listening · 1 audio sender</text>
+  <rect x="860.5" y="474.5" width="79" height="27" rx="13.5" fill="#2c2c2c" stroke="#484847" />
+  <text x="900" y="492.5" class="w w-btn" text-anchor="middle">Connect</text>
+  <path d="M200 514.5 H 940" stroke="#353535" />
 </svg>
 
 <style>
@@ -111,7 +141,7 @@ const nav = [
   }
 
   .ao-win :global(.w) { fill: #e9e9e7; }
-  .ao-win :global(.w-brand) { fill: #e9e9e7; font-size: 14px; font-weight: 650; }
+  .ao-win :global(.w-brand) { font-size: 14px; font-weight: 650; }
   .ao-win :global(.w-strip2) { fill: #999997; font-size: 12px; letter-spacing: 0.03em; }
   .ao-win :global(.w-nav) { font-size: 13px; font-weight: 450; }
   .ao-win :global(.w-nav-on) { font-weight: 650; }
@@ -123,7 +153,7 @@ const nav = [
   .ao-win :global(.w-red) { fill: #e5584b; }
   .ao-win :global(.w-lat) { font-size: 13px; }
   .ao-win :global(.w-btn) { font-size: 12px; letter-spacing: 0.03em; }
-  .ao-win :global(.w-btn-on) { fill: #e9e9e7; }
+  .ao-win :global(.w-code) { font-size: 21px; font-weight: 600; letter-spacing: 0.08em; }
 
   .ao-win :global(.w-ico) {
     fill: none;

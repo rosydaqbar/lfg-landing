@@ -1,0 +1,126 @@
+---
+// Aonin's tray / menu bar popover (dark theme), redrawn from Popover.svelte and the compact
+// ClientRow: same private listening state as the window.
+const rows = [
+  { name: 'Studio MacBook…', sub: '21.8 ms', mark: 'live', vol: 0.72, level: 0.62 },
+  { name: 'Office MacBook', sub: '24.1 ms', mark: 'live', vol: 0.55, level: 0.38 },
+  { name: 'Work Laptop', sub: 'Muted · 18.0 ms', mark: 'muted', vol: 0.8, level: 0 },
+];
+const holes = 8;
+const ico = {
+  lock: 'M3 6.5h8a1 1 0 0 1 1 1v4.5a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7.5a1 1 0 0 1 1-1z M4.5 6.5V4.5a2.5 2.5 0 0 1 5 0v2',
+  globe: 'M13 7A6 6 0 1 1 1 7a6 6 0 0 1 12 0z M1 7h12 M7 1c1.8 1.7 2.6 3.7 2.6 6S8.8 11.3 7 13C5.2 11.3 4.4 9.3 4.4 7S5.2 2.7 7 1z',
+  info: 'M7 6.5v3.5 M7 4.2v.1 M13 7A6 6 0 1 1 1 7a6 6 0 0 1 12 0z',
+  vol: 'M6.5 2.5 3.5 5H1.5v4h2l3 2.5z M9 5a3 3 0 0 1 0 4 M10.8 3.2a5.5 5.5 0 0 1 0 7.6',
+  volx: 'M6.5 2.5 3.5 5H1.5v4h2l3 2.5z M9 5.2l3.4 3.6 M12.4 5.2 9 8.8',
+  swap: 'M1.5 4.5h10 M9 2l2.5 2.5L9 7 M12.5 9.5h-10 M5 7 2.5 9.5 5 12',
+  power: 'M7 1v5 M11 3.3a5.5 5.5 0 1 1-8 0',
+};
+---
+<svg class="ao-pop" viewBox="0 0 360 312" role="img" aria-label="Preview of the Aonin tray popover: the private code, three audio senders with live meters and volume, and the quality setting.">
+  <rect width="360" height="312" fill="#212121" />
+
+  <!-- strip -->
+  <rect width="360" height="48" fill="#131313" />
+  <text x="16" y="29" class="p p-me">Studio room</text>
+  <circle cx="184" cy="24.5" r="4" fill="#f07a3a" />
+  <text x="194" y="28.5" class="p p-strip2">Listening</text>
+  <rect x="252.5" y="12.5" width="91" height="23" rx="11.5" fill="none" stroke="#999997" />
+  <text x="298" y="28" class="p p-small" text-anchor="middle">Stop listening</text>
+
+  <!-- private -->
+  <path transform="translate(16 60)" d={ico.lock} class="p-ico" />
+  <text x="37" y="71" class="p p-small p-strong">Private</text>
+  <path transform="translate(86 60.5) scale(0.93)" d={ico.info} class="p-ico" />
+  <rect x="108.5" y="55.5" width="77" height="23" rx="6" fill="#2c2c2c" stroke="#484847" />
+  <text x="147" y="71.5" class="p p-chip" text-anchor="middle">K7Q 4MZ</text>
+  <path transform="translate(256 61) scale(0.93)" d={ico.globe} class="p-ico p-ico-on" />
+  <text x="344" y="71" class="p p-small" text-anchor="end">Make public</text>
+  <path d="M0 86.5 H 360" stroke="#353535" />
+
+  <!-- audio senders -->
+  <text x="16" y="113" class="p p-label">Audio senders</text>
+  <text x="344" y="113" class="p p-label" text-anchor="end">To USB DAC</text>
+
+  {rows.map((r, i) => {
+    const y0 = 118 + i * 44;
+    const cy = y0 + 22;
+    const muted = r.mark === 'muted';
+    const fill = 52 * r.vol;
+    return (
+      <g>
+        {muted
+          ? <circle cx="20" cy={cy} r="3.25" fill="none" stroke="#a2a2a0" stroke-width="1.5" />
+          : <circle cx="20" cy={cy} r="4" fill="#9bbe55" />}
+        <text x="36" y={y0 + 19} class="p p-name">{r.name}</text>
+        <text x="36" y={y0 + 34} class="p p-small p-dim">{r.sub}</text>
+        <g data-meter data-level={r.level} data-muted={muted ? '' : undefined}>
+          {Array.from({ length: holes }, (_, j) => (
+            <circle cx={150 + j * 8} cy={cy} r="2.7" class={j < Math.round(r.level * holes) ? 'hole on' : 'hole'} />
+          ))}
+        </g>
+        <rect x="216" y={cy - 1.5} width="52" height="3" rx="1.5" fill="#353535" />
+        <rect x="216" y={cy - 1.5} width={fill} height="3" rx="1.5" fill={muted ? '#5a5a58' : '#e9e9e7'} />
+        <circle cx={216 + fill} cy={cy} r="6" fill="#2c2c2c" stroke="#484847" />
+        {muted ? (
+          <g>
+            <circle cx="294" cy={cy} r="14" fill="#131313" />
+            <path transform={`translate(287.5 ${cy - 6.5}) scale(0.93)`} d={ico.volx} class="p-ico p-ico-on" />
+          </g>
+        ) : (
+          <g>
+            <circle cx="294" cy={cy} r="13.5" fill="#2c2c2c" stroke="#484847" />
+            <path transform={`translate(287.5 ${cy - 6.5}) scale(0.93)`} d={ico.vol} class="p-ico p-ico-on" />
+          </g>
+        )}
+        <g opacity="0.45">
+          <circle cx="330" cy={cy} r="13.5" fill="#2c2c2c" stroke="#484847" />
+          <path transform={`translate(323.5 ${cy - 6.5}) scale(0.93)`} d={ico.swap} class="p-ico p-ico-on" />
+        </g>
+        <path d={`M16 ${y0 + 44.5} H 344`} stroke="#353535" />
+      </g>
+    );
+  })}
+
+  <!-- footer -->
+  <rect y="262" width="360" height="50" fill="#191919" />
+  <path d="M0 262.5 H 360" stroke="#353535" />
+  <text x="14" y="291" class="p p-small p-dim">Highest · 24-bit · 48 kHz</text>
+  <path d="M156 283 l3.5 3.5 -3.5 3.5" class="p-ico" />
+  <text x="306" y="291" class="p p-small" text-anchor="end">Open Aonin</text>
+  <path transform="translate(324 280) scale(0.93)" d={ico.power} class="p-ico" />
+</svg>
+
+<style>
+  .ao-pop {
+    display: block;
+    width: 100%;
+    height: auto;
+    font-family: 'Hanken Grotesk Variable', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-feature-settings: 'tnum' 1;
+  }
+
+  .ao-pop :global(.p) { fill: #e9e9e7; }
+  .ao-pop :global(.p-me) { font-size: 13px; font-weight: 700; }
+  .ao-pop :global(.p-strip2) { fill: #999997; font-size: 11px; letter-spacing: 0.04em; }
+  .ao-pop :global(.p-small) { font-size: 11px; letter-spacing: 0.03em; }
+  .ao-pop :global(.p-strong) { font-weight: 600; }
+  .ao-pop :global(.p-dim) { fill: #a2a2a0; }
+  .ao-pop :global(.p-label) { fill: #a2a2a0; font-size: 11px; letter-spacing: 0.04em; }
+  .ao-pop :global(.p-name) { font-size: 12.5px; font-weight: 600; }
+  .ao-pop :global(.p-chip) { font-size: 12px; letter-spacing: 0.06em; }
+
+  .ao-pop :global(.p-ico) {
+    fill: none;
+    stroke: #a2a2a0;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .ao-pop :global(.p-ico-on) { stroke: #e9e9e7; }
+
+  .ao-pop :global(.hole) { fill: #4a4a4a; transition: fill 90ms linear; }
+  .ao-pop :global(.hole.on) { fill: #e9e9e7; }
+  .ao-pop :global(.hole.flash) { fill: #f07a3a; transition: none; }
+</style>

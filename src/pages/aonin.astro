@@ -2,14 +2,65 @@
 import '@fontsource-variable/hanken-grotesk';
 import Base from '../layouts/Base.astro';
 import WindowArt from '../components/aonin/WindowArt.astro';
+import PopoverArt from '../components/aonin/PopoverArt.astro';
+import FlowArt from '../components/aonin/FlowArt.astro';
 import appIcon from '../assets/aonin/app-icon.svg?raw';
+
+// Every claim below comes from the Aonin README / app. Nothing invented.
+const steps = [
+  {
+    n: '01',
+    title: 'One computer listens',
+    body: 'Pick any machine as the listener. It mixes every stream and plays them on one output: headphones, speakers or a USB DAC.',
+  },
+  {
+    n: '02',
+    title: 'The others send',
+    body: 'Every running Aonin shows up on the network by itself. The other computers join as audio senders and stream their system audio, their mic, or both.',
+  },
+  {
+    n: '03',
+    title: 'You hear all of it',
+    body: 'Set each computer’s volume, mute one, and watch its level live. Audio senders can hear the listener back, too.',
+  },
+];
+
+const quality = [
+  { name: 'Highest', detail: '24-bit · 48 kHz, uncompressed', rate: '2.3 Mbps', on: true },
+  { name: 'CD', detail: '16-bit · 48 kHz, CD quality', rate: '1.5 Mbps' },
+  { name: 'Balanced', detail: 'Opus, for busy Wi-Fi', rate: '256 kbps' },
+  { name: 'Saver', detail: 'Opus, for weak Wi-Fi', rate: '96 kbps' },
+];
+
+const health = [
+  { name: 'Studio MacBook Pro', lat: '21.8 ms', target: '20.0 ms', rep: 4, gaps: 0, drops: 0, mark: 'live' },
+  { name: 'Office MacBook', lat: '24.1 ms', target: '23.0 ms', rep: 11, gaps: 0, drops: 1, mark: 'error' },
+  { name: 'Work Laptop', lat: '18.0 ms', target: '18.0 ms', rep: 0, gaps: 0, drops: 0, mark: 'live' },
+];
+
+const done = [
+  'Highest-quality streaming with redundancy, retransmit and an adaptive jitter buffer',
+  'System audio and mic capture on Windows and macOS, no drivers',
+  'Discovery on the local network, loop detection and auto-reconnect',
+  'Per-device volume, mute and live meters from the tray or menu bar',
+  'Hand the listener role to another device',
+  'Private listeners with a code, and encrypted audio',
+];
+
+const next = [
+  { tag: 'V1', text: 'Sign in so your own devices trust each other without a code' },
+  { tag: 'V1.1', text: 'Android and iOS: listen and send the mic first' },
+  { tag: 'V1.2', text: 'A Mac app redesigned in the native macOS look' },
+  { tag: 'Later', text: 'Code signing for Windows and macOS' },
+];
 ---
 <Base
   title="Aonin · Coming soon"
-  description="Aonin: hear every computer on your desk through one pair of headphones. Coming soon for Windows and macOS."
+  description="Aonin: hear every computer on your desk through one pair of headphones. Local network only, uncompressed 24-bit audio, no drivers. Coming soon for Windows and macOS."
 >
   <div class="page">
-    <main class="stage">
+    <!-- Hero -->
+    <header class="stage">
       <span class="icon" set:html={appIcon} aria-hidden="true" />
 
       <p class="soon"><i aria-hidden="true"></i>coming soon</p>
@@ -24,7 +75,263 @@ import appIcon from '../assets/aonin/app-icon.svg?raw';
 
       <figure class="preview" data-ao-art>
         <div class="win"><WindowArt /></div>
+        <div class="pop"><PopoverArt /></div>
       </figure>
+    </header>
+
+    <main>
+      <!-- How it works -->
+      <section class="sec" aria-labelledby="how-h">
+        <div class="wrap">
+          <div class="head" data-reveal="head">
+            <p class="eyebrow">How it works</p>
+            <h2 id="how-h">One listener.<br />Every other computer sends to it.</h2>
+            <p class="lede">Aonin runs from the tray on Windows and the menu bar on macOS. The same app goes on every machine, and any of them can be the listener.</p>
+          </div>
+
+          <div class="flowcard" data-reveal="rise">
+            <div class="flowscroll"><FlowArt /></div>
+          </div>
+
+          <ol class="steps" data-reveal="rise" data-reveal-group>
+            {steps.map((s) => (
+              <li>
+                <span class="num">{s.n}</span>
+                <h3>{s.title}</h3>
+                <p>{s.body}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <!-- Features -->
+      <section class="sec" aria-labelledby="feat-h">
+        <div class="wrap">
+          <div class="head" data-reveal="head">
+            <p class="eyebrow">Why it’s different</p>
+            <h2 id="feat-h">Small app.<br />No compromises on sound.</h2>
+            <p class="lede">No servers, no accounts and no drivers. Just your computers, your network, and the best audio it can carry.</p>
+          </div>
+
+          <div class="grid" data-reveal="rise" data-reveal-group>
+            <article class="card">
+              <div class="vig">
+                <div class="ui">
+                  <p class="ui-head">Listeners on this network</p>
+                  <div class="ui-row">
+                    <i class="dot green"></i>
+                    <span class="ui-who"><b>PC-Studio</b><small>2 audio senders</small></span>
+                    <span class="ui-btn">Connect</span>
+                  </div>
+                  <div class="ui-row">
+                    <i class="dot green"></i>
+                    <span class="ui-who"><b>Living Room PC</b><small>1 audio sender</small></span>
+                    <span class="ui-btn">Connect</span>
+                  </div>
+                </div>
+              </div>
+              <h3>Pure local network</h3>
+              <p>Devices find each other on the LAN and nothing leaves it. No servers, no accounts.</p>
+            </article>
+
+            <article class="card">
+              <div class="vig">
+                <div class="ui">
+                  <p class="ui-head">Quality</p>
+                  {quality.map((q) => (
+                    <div class="ui-radio" data-on={q.on ? '' : undefined}>
+                      <i></i>
+                      <span class="ui-who"><b>{q.name}</b><small>{q.detail}</small></span>
+                      <small class="r">{q.rate}</small>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <h3>Highest quality by default</h3>
+              <p>Uncompressed 24-bit / 48 kHz out of the box, with lighter tiers for weak networks.</p>
+            </article>
+
+            <article class="card">
+              <div class="vig">
+                <div class="pk-stage">
+                  <div class="packets" aria-hidden="true">
+                    <span><i></i><b></b></span>
+                    <span><i></i><b></b></span>
+                    <span class="lost"><i></i><b></b></span>
+                    <span class="fixed"><i></i><b></b></span>
+                    <span><i></i><b></b></span>
+                  </div>
+                  <div class="pk-keys" aria-hidden="true">
+                    <small class="k-lost">Lost on Wi-Fi</small>
+                    <small class="k-fixed">Rebuilt from the next one</small>
+                  </div>
+                  <p class="pk-note"><b>2 ms</b> per packet, plus a copy of the 2 ms before it</p>
+                </div>
+              </div>
+              <h3>Real time over Wi-Fi</h3>
+              <p>Typically 15–30 ms of buffering. A lost packet is rebuilt from the next one, and longer gaps are sent again.</p>
+            </article>
+
+            <article class="card">
+              <div class="vig">
+                <div class="ui">
+                  <div class="ui-switch">
+                    <span class="ui-ico"><svg viewBox="0 0 14 14"><path d="M1.5 2h11v7.5h-11z M5 12.5h4 M7 9.5v3" /></svg></span>
+                    <span class="ui-who"><b>System audio</b><small>Everything this device plays</small></span>
+                    <span class="ui-track on"><i></i></span>
+                  </div>
+                  <div class="ui-switch">
+                    <span class="ui-ico"><svg viewBox="0 0 14 14"><path d="M5 1.5h4v6.5a2 2 0 0 1-4 0z M2.5 7a4.5 4.5 0 0 0 9 0 M7 11.5v2" /></svg></span>
+                    <span class="ui-who"><b>Microphone</b><small>USB Microphone</small></span>
+                    <span class="ui-track"><i></i></span>
+                  </div>
+                </div>
+              </div>
+              <h3>No drivers</h3>
+              <p>System audio is captured with WASAPI loopback on Windows and the Core Audio process tap on macOS 14.2+.</p>
+            </article>
+
+            <article class="card">
+              <div class="vig">
+                <div class="ui">
+                  <p class="ui-title">Join a private listener</p>
+                  <small class="ui-hint">Type the code shown on the listener.</small>
+                  <span class="ui-field">K7Q 4MZ<i aria-hidden="true"></i></span>
+                  <span class="ui-actions"><span class="ui-btn quiet">Cancel</span><span class="ui-btn primary">Join</span></span>
+                </div>
+              </div>
+              <h3>Private when you want it</h3>
+              <p>A private listener shows a code. Only devices that type it can join, and the audio is encrypted.</p>
+            </article>
+
+            <article class="card">
+              <div class="vig">
+                <div class="ui ui-chips">
+                  <small>Send</small>
+                  <span><em class="on">System audio</em><em class="on">Mic on</em></span>
+                  <small>Hear</small>
+                  <span><em class="on">System audio</em><em>Mic</em></span>
+                </div>
+              </div>
+              <h3>Audio both ways</h3>
+              <p>An audio sender can hear the listener back: its apps, its mic, or both.</p>
+            </article>
+          </div>
+
+          <div class="grid two" data-reveal="rise" data-reveal-group>
+            <article class="card">
+              <div class="vig">
+                <div class="ui">
+                  <div class="ui-row">
+                    <i class="dot red"></i>
+                    <span class="ui-who"><b>Studio iMac</b><small class="red">Joining would play your own audio back to you.</small></span>
+                  </div>
+                  <div class="ui-row">
+                    <i class="dot green"></i>
+                    <span class="ui-who"><b>PC-Studio</b><small>Listening · 2 audio senders</small></span>
+                    <span class="ui-btn">Connect</span>
+                  </div>
+                </div>
+              </div>
+              <h3>No feedback loops</h3>
+              <p>A device can’t join a listener whose audio already comes from it, because the sound would bounce back and forth. Those listeners stay visible, with the reason.</p>
+            </article>
+
+            <article class="card">
+              <div class="vig">
+                <div class="ui ui-confirm">
+                  <p class="ui-title">Make Office MacBook the listener?</p>
+                  <small class="ui-hint">Everyone’s audio will play there, this PC included.</small>
+                  <span class="ui-actions"><span class="ui-btn quiet">Cancel</span><span class="ui-btn strong">Make listener</span></span>
+                </div>
+              </div>
+              <h3>Hand over the listener</h3>
+              <p>Make another computer the listener and every audio sender follows it. Nobody has to touch the other machines.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Network honesty -->
+      <section class="sec" aria-labelledby="net-h">
+        <div class="wrap split">
+          <div class="head" data-reveal="head">
+            <p class="eyebrow">Connection health</p>
+            <h2 id="net-h">Tells you the truth about your network.</h2>
+            <p class="lede">Each incoming stream gets an adaptive buffer that grows to cover the worst recent Wi-Fi stall and shrinks again while the network behaves. Aonin shows what it’s doing, per device, in plain words.</p>
+            <dl class="legend">
+              <dt>Repaired</dt><dd>Packets Wi-Fi lost that Aonin got back in time. Nothing was lost.</dd>
+              <dt>Covered gaps</dt><dd>Packets that never arrived, smoothed over.</dd>
+              <dt>Dropouts</dt><dd>The buffer ran dry and sound paused. Aonin raises the buffer after each one.</dd>
+            </dl>
+          </div>
+
+          <div class="vig big" data-reveal="rise">
+            <div class="ui ui-table">
+              <p class="ui-head">Connection health</p>
+              <table>
+                <thead>
+                  <tr><th></th><th>Device</th><th class="r">Latency</th><th class="r">Repaired</th><th class="r">Gaps</th><th class="r">Dropouts</th></tr>
+                </thead>
+                <tbody>
+                  {health.map((h) => (
+                    <tr>
+                      <td><i class={`dot ${h.mark === 'live' ? 'green' : 'red'}`}></i></td>
+                      <td class="nm">{h.name}</td>
+                      <td class="r">{h.lat}<small>target {h.target}</small></td>
+                      <td class="r">{h.rep}</td>
+                      <td class="r">{h.gaps}</td>
+                      <td class={h.drops ? 'r bad' : 'r'}>{h.drops}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Status -->
+      <section class="sec" aria-labelledby="status-h">
+        <div class="wrap">
+          <div class="head" data-reveal="head">
+            <p class="eyebrow">Where it’s at</p>
+            <h2 id="status-h">Early development. Already doing the job.</h2>
+            <p class="lede">The engine and the listener / audio sender flow work today, tested between a Windows PC and a MacBook over Wi-Fi.</p>
+          </div>
+
+          <div class="grid two status" data-reveal="rise" data-reveal-group>
+            <div class="card list">
+              <h3>Working today</h3>
+              <ul>
+                {done.map((d) => (
+                  <li><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2.5 7.5 5.5 10.5 11.5 3.5" /></svg>{d}</li>
+                ))}
+              </ul>
+            </div>
+            <div class="card list">
+              <h3>Coming next</h3>
+              <ul class="next">
+                {next.map((n) => (
+                  <li><span class="tag">{n.tag}</span>{n.text}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Closing -->
+      <section class="end" data-reveal="rise">
+        <span class="icon sm" set:html={appIcon} aria-hidden="true" />
+        <h2>Coming soon to Windows and macOS.</h2>
+        <p>Aonin is free software under the GNU General Public License v3.</p>
+        <a class="btn" href="/">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" /></svg>
+          Back to home
+        </a>
+      </section>
     </main>
 
     <footer class="foot">© 2026 LFG.ink</footer>
@@ -40,19 +347,28 @@ import appIcon from '../assets/aonin/app-icon.svg?raw';
 
   .page {
     --housing: #212121;
+    --recess: #191919;
+    --raised: #2c2c2c;
     --strip: #131313;
     --ink: #e9e9e7;
     --ink-2: #a2a2a0;
+    --ink-3: #7a7a78;
+    --line: #353535;
     --line-strong: #484847;
+    --card: #1a1a1a;
+    --card-line: #262626;
     --orange: #f07a3a;
     --orange-ink: #f39260;
+    --green: #9bbe55;
+    --red: #e5584b;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
 
     min-height: 100svh;
     overflow-x: clip;
     display: flex;
     flex-direction: column;
     background:
-      radial-gradient(60% 45% at 50% 0%, rgb(255 255 255 / 0.05), transparent 70%),
+      radial-gradient(60% 900px at 50% 0%, rgb(255 255 255 / 0.05), transparent 70%),
       var(--strip);
     color: var(--ink);
     font-family: 'Hanken Grotesk Variable', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -69,8 +385,8 @@ import appIcon from '../assets/aonin/app-icon.svg?raw';
     outline-offset: 3px;
   }
 
+  /* ---------- Hero (centered) ---------- */
   .stage {
-    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -79,7 +395,7 @@ import appIcon from '../assets/aonin/app-icon.svg?raw';
   }
 
   .stage > :not(.preview) {
-    animation: rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: rise 0.9s var(--ease) both;
   }
 
   .stage > :nth-child(2) { animation-delay: 0.06s; }
@@ -99,6 +415,11 @@ import appIcon from '../assets/aonin/app-icon.svg?raw';
     display: block;
     width: clamp(72px, 9vw, 96px);
     filter: drop-shadow(0 16px 28px rgb(0 0 0 / 0.55));
+  }
+
+  .icon.sm {
+    width: 64px;
+    margin-inline: auto;
   }
 
   .icon :global(svg) {
@@ -151,7 +472,7 @@ import appIcon from '../assets/aonin/app-icon.svg?raw';
     margin-top: 14px;
     font-size: 12px;
     letter-spacing: 0.06em;
-    color: #7a7a78;
+    color: var(--ink-3);
   }
 
   /* Aonin's pill button: the one primary action, in orange */
@@ -168,7 +489,7 @@ import appIcon from '../assets/aonin/app-icon.svg?raw';
     font-size: 14px;
     font-weight: 600;
     letter-spacing: 0.02em;
-    transition: background 120ms cubic-bezier(0.16, 1, 0.3, 1), transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition: background 120ms var(--ease), transform 200ms var(--ease);
   }
 
   .btn svg {
@@ -190,31 +511,48 @@ import appIcon from '../assets/aonin/app-icon.svg?raw';
     transform: none;
   }
 
-  /* One preview, fading into the dark below */
+  /* The window, with the tray popover over its right side, fading into the dark below */
   .preview {
-    width: min(960px, 100%);
+    position: relative;
+    width: min(1040px, 100%);
     margin: clamp(56px, 8vw, 88px) 0 0;
-    -webkit-mask-image: linear-gradient(180deg, #000 30%, rgb(0 0 0 / 0.5) 62%, transparent 92%);
-    mask-image: linear-gradient(180deg, #000 30%, rgb(0 0 0 / 0.5) 62%, transparent 92%);
-    animation: surface 1.3s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+    padding-right: 6%;
+    -webkit-mask-image: linear-gradient(180deg, #000 45%, rgb(0 0 0 / 0.5) 72%, transparent 96%);
+    mask-image: linear-gradient(180deg, #000 45%, rgb(0 0 0 / 0.5) 72%, transparent 96%);
+    animation: surface 1.3s var(--ease) 0.35s both;
   }
 
-  /* One owner for the rounded corner: the frame clips, and its edge is drawn on top at the
-     same radius, so no sliver of a second curve shows at the corners. */
-  .win {
+  /* One owner for each rounded corner: the frame clips, and its edge is drawn on top at
+     the same radius, so no sliver of a second curve shows at the corners. */
+  .win,
+  .pop {
     position: relative;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 40px 80px -30px rgb(0 0 0 / 0.9);
   }
 
-  .win::after {
+  .win::after,
+  .pop::after {
     content: '';
     position: absolute;
     inset: 0;
     border-radius: inherit;
     box-shadow: inset 0 0 0 1px #3a3a3a;
     pointer-events: none;
+  }
+
+  .pop {
+    position: absolute;
+    right: 0;
+    top: 25%;
+    width: 33%;
+    border-radius: 10px;
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.04) inset,
+      0 30px 60px -12px rgb(0 0 0 / 0.85),
+      0 0 0 1px rgb(0 0 0 / 0.5);
+    animation: pop 1.1s var(--ease) 0.9s both;
   }
 
   @keyframes surface {
@@ -224,12 +562,723 @@ import appIcon from '../assets/aonin/app-icon.svg?raw';
     }
   }
 
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: translateY(18px) scale(0.98);
+    }
+  }
+
+  /* ---------- Sections (centered column, left-aligned text) ---------- */
+  main {
+    flex: 1;
+  }
+
+  .wrap {
+    width: min(1080px, 100% - 40px);
+    margin-inline: auto;
+  }
+
+  .sec {
+    padding-top: clamp(88px, 12vw, 152px);
+  }
+
+  .sec:first-child {
+    padding-top: clamp(40px, 6vw, 72px);
+  }
+
+  .head {
+    max-width: 720px;
+    margin-bottom: clamp(32px, 4vw, 48px);
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--orange);
+  }
+
+  .head h2,
+  .end h2 {
+    margin-top: 14px;
+    font-size: clamp(2rem, 4.2vw, 3rem);
+    line-height: 1.04;
+    font-weight: 650;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .lede {
+    margin-top: 18px;
+    max-width: 56ch;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+
+  .flowcard {
+    padding: clamp(20px, 3.5vw, 40px);
+    border-radius: 20px;
+    background: var(--card);
+    border: 1px solid var(--card-line);
+  }
+
+  .steps {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-top: 40px;
+    padding: 0;
+  }
+
+  .steps .num {
+    display: block;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+  }
+
+  .steps h3,
+  .card h3 {
+    margin-top: 16px;
+    font-size: 1.0625rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+  }
+
+  .steps p,
+  .card p {
+    margin-top: 8px;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+
+  /* Cards */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .grid.two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 16px;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 12px 24px;
+    border-radius: 18px;
+    background: var(--card);
+    border: 1px solid var(--card-line);
+  }
+
+  .card > h3,
+  .card > p {
+    padding-inline: 12px;
+  }
+
+  /* Vignette: a small recessed stage holding a real piece of the app's UI */
+  .vig {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    place-items: center;
+    height: 248px;
+    padding: 16px;
+    border-radius: 12px;
+    background:
+      radial-gradient(circle at 1px 1px, #262626 1px, transparent 1.3px) 0 0 / 16px 16px,
+      #151515;
+    border: 1px solid #1f1f1f;
+    overflow: hidden;
+  }
+
+  .vig.big {
+    height: auto;
+    padding: clamp(16px, 3vw, 32px);
+  }
+
+  .ui {
+    width: 100%;
+    max-width: 340px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--housing);
+    border: 1px solid #2e2e2e;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 28px rgb(0 0 0 / 0.35);
+    font-size: 13px;
+    text-align: left;
+  }
+
+  .ui small {
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    color: var(--ink-2);
+  }
+
+  .ui b {
+    font-weight: 600;
+  }
+
+  .ui-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 4px;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+  }
+
+  .ui-head small {
+    color: var(--ink-3);
+  }
+
+  .ui-title {
+    font-weight: 700;
+  }
+
+  .ui-hint {
+    display: block;
+    margin-top: 4px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex: none;
+    display: inline-block;
+  }
+
+  .dot.green { background: var(--green); }
+  .dot.red { background: var(--red); }
+  .red { color: var(--red) !important; }
+
+  .ui-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .ui-row:last-child {
+    border-bottom: 0;
+  }
+
+  .ui-who {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .ui-who b,
+  .ui-who small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ui-btn {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    height: 26px;
+    padding: 0 12px;
+    border-radius: 13px;
+    border: 1px solid var(--line-strong);
+    background: var(--raised);
+    font-size: 12px;
+    letter-spacing: 0.03em;
+  }
+
+  .ui-btn.quiet {
+    border-color: transparent;
+    background: transparent;
+    color: var(--ink-2);
+  }
+
+  .ui-btn.primary {
+    border-color: var(--orange);
+    background: var(--orange);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .ui-btn.strong {
+    border-color: var(--ink-2);
+    font-weight: 600;
+  }
+
+  .ui-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  /* quality radios */
+  .ui-radio {
+    display: grid;
+    grid-template-columns: 14px 1fr auto;
+    align-items: center;
+    gap: 10px;
+    min-height: 38px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .ui-radio .ui-who small {
+    font-size: 10.5px;
+  }
+
+  .ui-radio:last-child {
+    border-bottom: 0;
+  }
+
+  .ui-radio i {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px var(--ink-2);
+  }
+
+  .ui-radio[data-on] i {
+    box-shadow: inset 0 0 0 4px var(--ink);
+  }
+
+  .ui-radio:not([data-on]) b {
+    font-weight: 450;
+  }
+
+  .ui-radio small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ui-radio .r {
+    color: var(--ink-3);
+  }
+
+  /* switches */
+  .ui-switch {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 52px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .ui-switch:last-child {
+    border-bottom: 0;
+  }
+
+  .ui-ico {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: var(--recess);
+    flex: none;
+  }
+
+  .ui-ico svg,
+  .list svg {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: var(--ink-2);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .ui-track {
+    position: relative;
+    width: 34px;
+    height: 20px;
+    border-radius: 10px;
+    box-shadow: inset 0 0 0 1.5px var(--ink-2);
+    flex: none;
+  }
+
+  .ui-track i {
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--ink-2);
+  }
+
+  .ui-track.on {
+    background: var(--ink);
+    box-shadow: none;
+  }
+
+  .ui-track.on i {
+    background: var(--raised);
+    transform: translateX(14px);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
+  }
+
+  /* join field */
+  .ui-field {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    margin-top: 8px;
+    padding: 0 12px;
+    border-radius: 8px;
+    background: var(--recess);
+    border: 1px solid var(--line-strong);
+    font-size: 18px;
+    letter-spacing: 0.08em;
+  }
+
+  .ui-field i {
+    width: 1.5px;
+    height: 20px;
+    margin-left: 2px;
+    background: var(--orange);
+    animation: caret 1.1s steps(1) infinite;
+  }
+
+  @keyframes caret {
+    50% { opacity: 0; }
+  }
+
+  /* send / hear chips */
+  .ui-chips {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    align-items: center;
+    gap: 10px;
+    padding-block: 16px;
+  }
+
+  .ui-chips span {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .ui-chips em {
+    font-style: normal;
+    height: 26px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 10px;
+    border-radius: 13px;
+    border: 1px solid var(--line-strong);
+    background: var(--raised);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+  }
+
+  .ui-chips em.on {
+    background: var(--strip);
+    border-color: var(--strip);
+    color: var(--ink);
+  }
+
+  /* packet strip */
+  /* each packet: a faint copy of the previous 2 ms, then its own 2 ms (as in the app's diagram) */
+  .pk-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .packets {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .packets span {
+    display: flex;
+    gap: 2px;
+  }
+
+  .packets i,
+  .packets b {
+    height: 20px;
+    border-radius: 4px;
+    background: var(--orange);
+  }
+
+  .packets i {
+    width: 14px;
+    opacity: 0.35;
+  }
+
+  .packets b {
+    width: 24px;
+  }
+
+  .packets .lost i,
+  .packets .lost b {
+    opacity: 1;
+    background: transparent;
+    box-shadow: inset 0 0 0 1.5px var(--red);
+  }
+
+  .packets .lost b {
+    background:
+      linear-gradient(45deg, transparent 44%, var(--red) 44% 56%, transparent 56%) center / 10px 10px no-repeat,
+      linear-gradient(-45deg, transparent 44%, var(--red) 44% 56%, transparent 56%) center / 10px 10px no-repeat;
+  }
+
+  .packets .fixed i {
+    opacity: 1;
+    background: var(--green);
+  }
+
+  .pk-keys {
+    display: flex;
+    gap: 16px;
+    margin-top: 14px;
+  }
+
+  .pk-keys small {
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    color: var(--ink-2);
+  }
+
+  .pk-keys small::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+  }
+
+  .k-lost::before { box-shadow: inset 0 0 0 1.5px var(--red); }
+  .k-fixed::before { background: var(--green); }
+
+  .pk-note {
+    margin-top: 22px;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    color: var(--ink-2);
+    text-align: center;
+  }
+
+  .pk-note b {
+    color: var(--ink);
+    font-weight: 650;
+  }
+
+  /* connection health */
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(32px, 5vw, 64px);
+    align-items: center;
+  }
+
+  .split .head {
+    margin-bottom: 0;
+  }
+
+  .legend {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px 18px;
+    margin-top: 28px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .legend dt {
+    font-weight: 600;
+  }
+
+  .legend dd {
+    color: var(--ink-2);
+  }
+
+  .ui-table {
+    max-width: none;
+    padding: 14px 16px 6px;
+  }
+
+  .ui-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .ui-table th {
+    padding: 8px 6px;
+    border-bottom: 1px solid var(--line);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-align: left;
+    color: var(--ink-2);
+  }
+
+  .ui-table td {
+    padding: 12px 6px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+  }
+
+  .ui-table tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .ui-table td:first-child,
+  .ui-table th:first-child {
+    width: 14px;
+    padding-left: 0;
+  }
+
+  .ui-table .nm {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .ui-table .r {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .ui-table td small {
+    display: block;
+    color: var(--ink-3);
+  }
+
+  .ui-table td.bad {
+    color: var(--red);
+    font-weight: 600;
+  }
+
+  /* status lists */
+  .card.list {
+    padding: 28px;
+  }
+
+  .card.list h3 {
+    margin-top: 0;
+    padding: 0;
+  }
+
+  .list ul {
+    list-style: none;
+    margin-top: 16px;
+    padding: 0;
+  }
+
+  .list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-top: 1px solid var(--card-line);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+
+  .list li svg {
+    flex: none;
+    margin-top: 4px;
+    stroke: var(--green);
+    stroke-width: 1.8;
+  }
+
+  .tag {
+    flex: none;
+    min-width: 44px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--line-strong);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-align: center;
+    color: var(--ink);
+  }
+
+  /* closing */
+  .end {
+    padding: clamp(112px, 14vw, 176px) 20px 0;
+    text-align: center;
+  }
+
+  .end h2 {
+    margin-top: 28px;
+  }
+
+  .end p {
+    margin-top: 14px;
+    color: var(--ink-2);
+  }
+
   .foot {
-    padding: 28px 20px 32px;
+    padding: clamp(72px, 9vw, 112px) 20px 32px;
     text-align: center;
     font-size: 12px;
     letter-spacing: 0.04em;
     color: #6a6a68;
+  }
+
+  @media (max-width: 900px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .split {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .steps {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+
+    .grid,
+    .grid.two {
+      grid-template-columns: 1fr;
+    }
+
+    .flowcard {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    /* the diagram stays legible: it scrolls sideways inside its card */
+    .flowscroll {
+      overflow-x: auto;
+      padding: 20px;
+      scrollbar-width: none;
+    }
+
+    .flowscroll :global(svg) {
+      min-width: 680px;
+    }
+
   }
 
   @media (max-width: 640px) {
@@ -239,16 +1288,27 @@ import appIcon from '../assets/aonin/app-icon.svg?raw';
       margin-left: 4px;
       width: 175%;
       max-width: none;
+      padding-right: 0;
+    }
+
+    .pop {
+      display: none;
+    }
+
+    .ui-table {
+      overflow-x: auto;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .stage > :not(.preview),
-    .preview {
+    .preview,
+    .pop {
       animation: fade 0.5s ease-out both;
     }
 
-    .soon i {
+    .soon i,
+    .ui-field i {
       animation: none;
     }
 
@@ -263,6 +1323,10 @@ import appIcon from '../assets/aonin/app-icon.svg?raw';
      repaired packet, the way the real app does. */
   const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const meters = Array.from(document.querySelectorAll<SVGGElement>('[data-meter]'));
+
+  if (calm) {
+    document.querySelectorAll<SVGSVGElement>('.ao-flow').forEach((s) => s.pauseAnimations());
+  }
 
   if (!calm && meters.length) {
     const rows = meters.map((m) => ({

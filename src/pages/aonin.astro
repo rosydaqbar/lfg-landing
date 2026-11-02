@@ -4,24 +4,25 @@ import Base from '../layouts/Base.astro';
 import WindowArt from '../components/aonin/WindowArt.astro';
 import PopoverArt from '../components/aonin/PopoverArt.astro';
 import FlowArt from '../components/aonin/FlowArt.astro';
+import UseScene from '../components/aonin/UseScene.astro';
 import appIcon from '../assets/aonin/app-icon.svg?raw';
 
 // Every claim below comes from the Aonin README / app. Nothing invented.
 const steps = [
   {
     n: '01',
-    title: 'One computer listens',
-    body: 'Pick any machine as the listener. It mixes every stream and plays them on one output: headphones, speakers or a USB DAC.',
+    title: 'Choose your listener',
+    body: 'Choose a computer as the listener. Hear every stream together through your headphones, speakers or USB DAC.',
   },
   {
     n: '02',
-    title: 'The others send',
-    body: 'Every running Aonin shows up on the network by itself. The other computers join as audio senders and stream their system audio, their mic, or both.',
+    title: 'Connect audio senders',
+    body: 'Aonin finds your computers on the network automatically. Connect them as audio senders to stream system audio, mic audio, or both.',
   },
   {
     n: '03',
-    title: 'You hear all of it',
-    body: 'Set each computer’s volume, mute one, and watch its level live. Audio senders can hear the listener back, too.',
+    title: 'Mix your audio',
+    body: 'Adjust each computer’s volume, mute it, and see live levels. Audio senders can hear the listener, too.',
   },
 ];
 
@@ -32,46 +33,58 @@ const quality = [
   { name: 'Saver', detail: 'Opus, for weak Wi-Fi', rate: '96 kbps' },
 ];
 
-const health = [
-  { name: 'Studio MacBook Pro', lat: '21.8 ms', target: '20.0 ms', rep: 4, gaps: 0, drops: 0, mark: 'live' },
-  { name: 'Office MacBook', lat: '24.1 ms', target: '23.0 ms', rep: 11, gaps: 0, drops: 1, mark: 'error' },
-  { name: 'Work Laptop', lat: '18.0 ms', target: '18.0 ms', rep: 0, gaps: 0, drops: 0, mark: 'live' },
-];
+// Three setups Aonin is for. Each only uses what the app does today.
+const uses = [
+  {
+    kind: 'desk',
+    who: 'You, at your desk',
+    title: 'PC and MacBook side by side',
+    body: 'Watch something on the MacBook next to your monitor and hear it in the headset already plugged into your PC.',
+  },
+  {
+    kind: 'work',
+    who: 'Working from home',
+    title: 'Work laptop next to a gaming PC',
+    body: 'Keep your PC headset on and still hear calls and notifications from the work laptop.',
+  },
+  {
+    kind: 'party',
+    who: 'Game night',
+    title: 'Everyone’s music, one set of speakers',
+    body: 'Friends play music from their own laptops through your speakers. Make the listener private and only people with the code can join.',
+  },
+] as const;
 
 const done = [
-  'Highest-quality streaming with redundancy, retransmit and an adaptive jitter buffer',
+  'Uncompressed audio that survives Wi-Fi packet loss',
   'System audio and mic capture on Windows and macOS, no drivers',
-  'Discovery on the local network, loop detection and auto-reconnect',
+  'Devices find each other and reconnect on their own',
   'Per-device volume, mute and live meters from the tray or menu bar',
-  'Hand the listener role to another device',
-  'Private listeners with a code, and encrypted audio',
+  'Hand the listener role to another computer',
+  'Private listeners with join codes and encrypted audio',
 ];
 
 const next = [
   { tag: 'V1', text: 'Sign in so your own devices trust each other without a code' },
   { tag: 'V1.1', text: 'Android and iOS: listen and send the mic first' },
-  { tag: 'V1.2', text: 'A Mac app redesigned in the native macOS look' },
+  { tag: 'V1.2', text: 'A Mac app redesign that looks native to macOS' },
   { tag: 'Later', text: 'Code signing for Windows and macOS' },
 ];
 ---
 <Base
   title="Aonin · Coming soon"
-  description="Aonin: hear every computer on your desk through one pair of headphones. Local network only, uncompressed 24-bit audio, no drivers. Coming soon for Windows and macOS."
+  description="Hear every computer through one pair of headphones. Uncompressed 24-bit audio, local network only, no drivers. Aonin is coming to Windows and macOS."
 >
   <div class="page">
     <!-- Hero -->
     <header class="stage">
       <span class="icon" set:html={appIcon} aria-hidden="true" />
 
-      <p class="soon"><i aria-hidden="true"></i>coming soon</p>
       <h1>Aonin</h1>
       <p class="tagline">Hear every computer on your desk through one pair of headphones.</p>
       <p class="meta">Windows &amp; macOS · local network only</p>
 
-      <a class="btn" href="/">
-        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" /></svg>
-        Back to home
-      </a>
+      <span class="btn btn-soon"><i aria-hidden="true"></i>Coming soon</span>
 
       <figure class="preview" data-ao-art>
         <div class="win"><WindowArt /></div>
@@ -85,8 +98,8 @@ const next = [
         <div class="wrap">
           <div class="head" data-reveal="head">
             <p class="eyebrow">How it works</p>
-            <h2 id="how-h">One listener.<br />Every other computer sends to it.</h2>
-            <p class="lede">Aonin runs from the tray on Windows and the menu bar on macOS. The same app goes on every machine, and any of them can be the listener.</p>
+            <h2 id="how-h">Every computer.<br />One place to listen.</h2>
+            <p class="lede">Install Aonin on each computer. Choose any one as the listener. Control it from the Windows tray or macOS menu bar.</p>
           </div>
 
           <div class="flowcard" data-reveal="rise">
@@ -109,12 +122,52 @@ const next = [
       <section class="sec" aria-labelledby="feat-h">
         <div class="wrap">
           <div class="head" data-reveal="head">
-            <p class="eyebrow">Why it’s different</p>
-            <h2 id="feat-h">Small app.<br />No compromises on sound.</h2>
-            <p class="lede">No servers, no accounts and no drivers. Just your computers, your network, and the best audio it can carry.</p>
+            <p class="eyebrow">Built for listening</p>
+            <h2 id="feat-h">Full quality.<br />Right across your network.</h2>
+            <p class="lede">Hear every computer together in full quality. No servers, accounts or drivers.</p>
           </div>
 
-          <div class="grid" data-reveal="rise" data-reveal-group>
+          <div class="bento" data-reveal="rise" data-reveal-group>
+            <article class="card b-quality">
+              <div class="txt">
+                <p class="stat">24-bit <span>/</span> 48 kHz</p>
+                <h3>Highest quality by default</h3>
+                <p>Start with uncompressed audio, no tuning required. Switch to a lighter tier when your network needs it.</p>
+              </div>
+              <div class="vig">
+                <div class="ui">
+                  <p class="ui-head">Quality <small>For audio this device sends</small></p>
+                  {quality.map((q) => (
+                    <div class="ui-radio" data-on={q.on ? '' : undefined}>
+                      <i></i>
+                      <span class="ui-who"><b>{q.name}</b><small>{q.detail}</small></span>
+                      <small class="r">{q.rate}</small>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </article>
+
+            <article class="card b-time">
+              <div class="vig">
+                <div class="pk-stage">
+                  <div class="packets" aria-hidden="true">
+                    <span><i></i><b></b></span>
+                    <span class="lost"><i></i><b></b></span>
+                    <span class="fixed"><i></i><b></b></span>
+                    <span><i></i><b></b></span>
+                  </div>
+                  <div class="pk-keys" aria-hidden="true">
+                    <small class="k-lost">Lost on Wi-Fi</small>
+                    <small class="k-fixed">Rebuilt</small>
+                  </div>
+                </div>
+              </div>
+              <p class="stat">15–30 ms</p>
+              <h3>Keep listening over Wi-Fi</h3>
+              <p>Listen without a cable. Aonin rebuilds a lost Wi-Fi packet from the next one to keep your audio playing.</p>
+            </article>
+
             <article class="card">
               <div class="vig">
                 <div class="ui">
@@ -131,46 +184,8 @@ const next = [
                   </div>
                 </div>
               </div>
-              <h3>Pure local network</h3>
-              <p>Devices find each other on the LAN and nothing leaves it. No servers, no accounts.</p>
-            </article>
-
-            <article class="card">
-              <div class="vig">
-                <div class="ui">
-                  <p class="ui-head">Quality</p>
-                  {quality.map((q) => (
-                    <div class="ui-radio" data-on={q.on ? '' : undefined}>
-                      <i></i>
-                      <span class="ui-who"><b>{q.name}</b><small>{q.detail}</small></span>
-                      <small class="r">{q.rate}</small>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <h3>Highest quality by default</h3>
-              <p>Uncompressed 24-bit / 48 kHz out of the box, with lighter tiers for weak networks.</p>
-            </article>
-
-            <article class="card">
-              <div class="vig">
-                <div class="pk-stage">
-                  <div class="packets" aria-hidden="true">
-                    <span><i></i><b></b></span>
-                    <span><i></i><b></b></span>
-                    <span class="lost"><i></i><b></b></span>
-                    <span class="fixed"><i></i><b></b></span>
-                    <span><i></i><b></b></span>
-                  </div>
-                  <div class="pk-keys" aria-hidden="true">
-                    <small class="k-lost">Lost on Wi-Fi</small>
-                    <small class="k-fixed">Rebuilt from the next one</small>
-                  </div>
-                  <p class="pk-note"><b>2 ms</b> per packet, plus a copy of the 2 ms before it</p>
-                </div>
-              </div>
-              <h3>Real time over Wi-Fi</h3>
-              <p>Typically 15–30 ms of buffering. A lost packet is rebuilt from the next one, and longer gaps are sent again.</p>
+              <h3>Your network only</h3>
+              <p>Your devices find each other on your LAN. Audio stays there. No servers or accounts.</p>
             </article>
 
             <article class="card">
@@ -184,12 +199,12 @@ const next = [
                   <div class="ui-switch">
                     <span class="ui-ico"><svg viewBox="0 0 14 14"><path d="M5 1.5h4v6.5a2 2 0 0 1-4 0z M2.5 7a4.5 4.5 0 0 0 9 0 M7 11.5v2" /></svg></span>
                     <span class="ui-who"><b>Microphone</b><small>USB Microphone</small></span>
-                    <span class="ui-track"><i></i></span>
+                    <span class="ui-track on"><i></i></span>
                   </div>
                 </div>
               </div>
               <h3>No drivers</h3>
-              <p>System audio is captured with WASAPI loopback on Windows and the Core Audio process tap on macOS 14.2+.</p>
+              <p>Start streaming system audio with native capture on Windows and macOS 14.2+. No drivers to install.</p>
             </article>
 
             <article class="card">
@@ -201,94 +216,41 @@ const next = [
                   <span class="ui-actions"><span class="ui-btn quiet">Cancel</span><span class="ui-btn primary">Join</span></span>
                 </div>
               </div>
-              <h3>Private when you want it</h3>
-              <p>A private listener shows a code. Only devices that type it can join, and the audio is encrypted.</p>
-            </article>
-
-            <article class="card">
-              <div class="vig">
-                <div class="ui ui-chips">
-                  <small>Send</small>
-                  <span><em class="on">System audio</em><em class="on">Mic on</em></span>
-                  <small>Hear</small>
-                  <span><em class="on">System audio</em><em>Mic</em></span>
-                </div>
-              </div>
-              <h3>Audio both ways</h3>
-              <p>An audio sender can hear the listener back: its apps, its mic, or both.</p>
-            </article>
-          </div>
-
-          <div class="grid two" data-reveal="rise" data-reveal-group>
-            <article class="card">
-              <div class="vig">
-                <div class="ui">
-                  <div class="ui-row">
-                    <i class="dot red"></i>
-                    <span class="ui-who"><b>Studio iMac</b><small class="red">Joining would play your own audio back to you.</small></span>
-                  </div>
-                  <div class="ui-row">
-                    <i class="dot green"></i>
-                    <span class="ui-who"><b>PC-Studio</b><small>Listening · 2 audio senders</small></span>
-                    <span class="ui-btn">Connect</span>
-                  </div>
-                </div>
-              </div>
-              <h3>No feedback loops</h3>
-              <p>A device can’t join a listener whose audio already comes from it, because the sound would bounce back and forth. Those listeners stay visible, with the reason.</p>
-            </article>
-
-            <article class="card">
-              <div class="vig">
-                <div class="ui ui-confirm">
-                  <p class="ui-title">Make Office MacBook the listener?</p>
-                  <small class="ui-hint">Everyone’s audio will play there, this PC included.</small>
-                  <span class="ui-actions"><span class="ui-btn quiet">Cancel</span><span class="ui-btn strong">Make listener</span></span>
-                </div>
-              </div>
-              <h3>Hand over the listener</h3>
-              <p>Make another computer the listener and every audio sender follows it. Nobody has to touch the other machines.</p>
+              <h3>Choose who can listen</h3>
+              <p>Your private listener displays a code. Devices need it to join, and your audio is encrypted.</p>
             </article>
           </div>
         </div>
       </section>
 
-      <!-- Network honesty -->
-      <section class="sec" aria-labelledby="net-h">
-        <div class="wrap split">
+      <!-- Who it's for -->
+      <section class="sec" aria-labelledby="uc-h">
+        <div class="wrap">
           <div class="head" data-reveal="head">
-            <p class="eyebrow">Connection health</p>
-            <h2 id="net-h">Tells you the truth about your network.</h2>
-            <p class="lede">Each incoming stream gets an adaptive buffer that grows to cover the worst recent Wi-Fi stall and shrinks again while the network behaves. Aonin shows what it’s doing, per device, in plain words.</p>
-            <dl class="legend">
-              <dt>Repaired</dt><dd>Packets Wi-Fi lost that Aonin got back in time. Nothing was lost.</dd>
-              <dt>Covered gaps</dt><dd>Packets that never arrived, smoothed over.</dd>
-              <dt>Dropouts</dt><dd>The buffer ran dry and sound paused. Aonin raises the buffer after each one.</dd>
-            </dl>
+            <p class="eyebrow">Who it’s for</p>
+            <h2 id="uc-h">For any desk or room with more than one computer.</h2>
+            <p class="lede">Any computer can be the listener. Here are a few setups we had in mind.</p>
           </div>
 
-          <div class="vig big" data-reveal="rise">
-            <div class="ui ui-table">
-              <p class="ui-head">Connection health</p>
-              <table>
-                <thead>
-                  <tr><th></th><th>Device</th><th class="r">Latency</th><th class="r">Repaired</th><th class="r">Gaps</th><th class="r">Dropouts</th></tr>
-                </thead>
-                <tbody>
-                  {health.map((h) => (
-                    <tr>
-                      <td><i class={`dot ${h.mark === 'live' ? 'green' : 'red'}`}></i></td>
-                      <td class="nm">{h.name}</td>
-                      <td class="r">{h.lat}<small>target {h.target}</small></td>
-                      <td class="r">{h.rep}</td>
-                      <td class="r">{h.gaps}</td>
-                      <td class={h.drops ? 'r bad' : 'r'}>{h.drops}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <div class="uses" data-reveal="rise" data-reveal-group>
+            {uses.map((u, i) => (
+              <article class={i === 0 ? 'card uc uc-lead' : 'card uc'}>
+                <div class="txt">
+                  <p class="who">{u.who}</p>
+                  <h3>{u.title}</h3>
+                  <p>{u.body}</p>
+                </div>
+                <div class="vig scene"><UseScene kind={u.kind} /></div>
+              </article>
+            ))}
           </div>
+
+          <ul class="more" data-reveal="rise" data-reveal-group>
+            <li>Laptop on the couch, speakers at the desk</li>
+            <li>A spare PC across the room</li>
+            <li>Hear the listener back</li>
+            <li class="etc">and more</li>
+          </ul>
         </div>
       </section>
 
@@ -296,9 +258,9 @@ const next = [
       <section class="sec" aria-labelledby="status-h">
         <div class="wrap">
           <div class="head" data-reveal="head">
-            <p class="eyebrow">Where it’s at</p>
-            <h2 id="status-h">Early development. Already doing the job.</h2>
-            <p class="lede">The engine and the listener / audio sender flow work today, tested between a Windows PC and a MacBook over Wi-Fi.</p>
+            <p class="eyebrow">Status</p>
+            <h2 id="status-h">Aonin is in early development.</h2>
+            <p class="lede">Streaming between listener and audio senders works today, tested on a Windows PC and a MacBook over Wi-Fi.</p>
           </div>
 
           <div class="grid two status" data-reveal="rise" data-reveal-group>
@@ -427,30 +389,12 @@ const next = [
     height: auto;
   }
 
-  .soon {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 32px;
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    color: var(--ink-2);
-  }
-
-  .soon i {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--orange);
-    animation: breathe 2.4s ease-in-out infinite;
-  }
-
   @keyframes breathe {
     50% { opacity: 0.3; }
   }
 
   h1 {
-    margin-top: 10px;
+    margin-top: 28px;
     font-size: clamp(3.5rem, 8vw, 5.75rem);
     line-height: 0.95;
     font-weight: 650;
@@ -509,6 +453,27 @@ const next = [
 
   .btn:active {
     transform: none;
+  }
+
+  /* Secondary, not clickable: a status, not an action */
+  .btn-soon,
+  .btn-soon:hover {
+    gap: 9px;
+    padding: 0 18px 0 16px;
+    background: var(--raised);
+    border: 1px solid var(--line-strong);
+    color: var(--ink);
+    font-weight: 500;
+    cursor: default;
+    transform: none;
+  }
+
+  .btn-soon i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--orange);
+    animation: breathe 2.4s ease-in-out infinite;
   }
 
   /* The window, with the tray popover over its right side, fading into the dark below */
@@ -658,6 +623,70 @@ const next = [
     font-size: 0.9375rem;
     line-height: 1.55;
     color: var(--ink-2);
+  }
+
+  /* Bento: the quality tile leads across two columns, four tiles follow */
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .card.b-quality {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .b-quality .txt {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px 12px 12px;
+  }
+
+  .b-quality .txt h3 {
+    margin-top: 18px;
+    line-height: 1.2;
+    font-size: 1.375rem;
+    letter-spacing: -0.02em;
+  }
+
+  .b-quality .vig {
+    height: 100%;
+    min-height: 300px;
+  }
+
+  .card .stat {
+    padding-inline: 12px;
+    margin-top: 20px;
+    font-size: clamp(2rem, 3.4vw, 2.75rem);
+    line-height: 1;
+    font-weight: 650;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+  }
+
+  .card.b-quality .stat {
+    margin-top: 0;
+    padding: 0;
+  }
+
+  .stat span {
+    color: var(--ink-3);
+    font-weight: 400;
+  }
+
+  .b-time .stat + h3 {
+    margin-top: 10px;
+  }
+
+  .b-time .vig {
+    flex: 1;
+    height: auto;
+    min-height: 148px;
   }
 
   /* Cards */
@@ -1173,6 +1202,109 @@ const next = [
     font-weight: 600;
   }
 
+  /* use cases: the lead scene runs full width, the other two share a row */
+  .uses {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .card.uc {
+    padding: 12px;
+  }
+
+  .uc .txt {
+    order: 1;
+    padding: 20px 12px 12px;
+  }
+
+  .uc .txt > p:not(.who) {
+    padding: 0;
+  }
+
+  .uc h3 {
+    line-height: 1.3;
+    padding: 0;
+  }
+
+  .vig.scene {
+    height: auto;
+    padding: 0;
+    display: block;
+    background: #151515;
+  }
+
+  .card.uc-lead {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr);
+    align-items: end;
+    gap: 12px;
+  }
+
+  .uc-lead .txt {
+    order: 0;
+    padding: 24px 12px 16px;
+  }
+
+  .uc-lead h3 {
+    font-size: 1.375rem;
+    letter-spacing: -0.02em;
+  }
+
+  .card .who {
+    padding: 0;
+    margin: 0 0 8px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--orange);
+  }
+
+  .uc .who + h3 {
+    margin-top: 0;
+  }
+
+  .more {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+    padding: 0;
+  }
+
+  .more li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 34px;
+    padding: 0 14px;
+    border-radius: 17px;
+    border: 1px solid var(--card-line);
+    background: var(--card);
+    font-size: 0.875rem;
+    color: var(--ink-2);
+  }
+
+  .more li::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--line-strong);
+  }
+
+  .more li.etc {
+    border-style: dashed;
+    border-color: var(--line-strong);
+    background: transparent;
+    color: var(--ink);
+  }
+
+  .more li.etc::before {
+    background: var(--orange);
+  }
+
   /* status lists */
   .card.list {
     padding: 28px;
@@ -1243,6 +1375,10 @@ const next = [
   }
 
   @media (max-width: 900px) {
+    .bento {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -1259,8 +1395,33 @@ const next = [
     }
 
     .grid,
-    .grid.two {
+    .grid.two,
+    .bento,
+    .uses {
       grid-template-columns: 1fr;
+    }
+
+    .card.uc-lead {
+      grid-template-columns: 1fr;
+    }
+
+    .uc-lead .txt {
+      order: 1;
+    }
+
+    .card.b-quality {
+      grid-column: auto;
+      grid-template-columns: 1fr;
+    }
+
+    .b-quality .txt {
+      order: 1;
+      padding-top: 8px;
+    }
+
+    .b-quality .vig {
+      min-height: 0;
+      height: auto;
     }
 
     .flowcard {
@@ -1307,7 +1468,7 @@ const next = [
       animation: fade 0.5s ease-out both;
     }
 
-    .soon i,
+    .btn-soon i,
     .ui-field i {
       animation: none;
     }
@@ -1325,7 +1486,7 @@ const next = [
   const meters = Array.from(document.querySelectorAll<SVGGElement>('[data-meter]'));
 
   if (calm) {
-    document.querySelectorAll<SVGSVGElement>('.ao-flow').forEach((s) => s.pauseAnimations());
+    document.querySelectorAll<SVGSVGElement>('.ao-flow, .ao-scene').forEach((s) => s.pauseAnimations());
   }
 
   if (!calm && meters.length) {

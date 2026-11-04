@@ -45,7 +45,6 @@ export const products: Product[] = [
     href: '/aonin',
     cta: 'Learn more',
     external: false,
-    soon: true,
   },
   {
     id: 'spam-catcher',

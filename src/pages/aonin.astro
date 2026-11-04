@@ -98,7 +98,7 @@ const next = [
       <p class="meta">Windows &amp; macOS · local network only</p>
 
       <div class="get">
-        <a class="btn" href="#pricing">
+        <a class="btn" href="#pricing" data-umami-event="try_now_click">
           Try now
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v9 M4.5 9 8 12.5 11.5 9" /></svg>
         </a>
@@ -287,7 +287,7 @@ const next = [
               <h3>Free</h3>
               <p class="price">$0</p>
               <p class="plan-sub">Listen to multiple computers through one pair of headphones or speakers.</p>
-              <a class="btn alt" href={RELEASES} data-download>
+              <a class="btn alt" href={RELEASES} data-download="pricing">
                 <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v8 M4.5 7 8 10.5 11.5 7 M3 13.5h10" /></svg>
                 Try for free
               </a>
@@ -304,7 +304,7 @@ const next = [
               <p class="price">$5 <span>One-time purchase</span></p>
               <p class="plan-sub">One license covers 2 computers for life, with one year of Pro updates.</p>
               <div class="buy">
-                <button class="btn" type="button" disabled>Purchase</button>
+                <button class="btn" type="button" aria-disabled="true" data-purchase>Purchase</button>
                 <p class="buy-note">Coming soon</p>
               </div>
               <p class="feats-head">Also included with Pro:</p>
@@ -358,7 +358,7 @@ const next = [
         <h2>Try Aonin now.</h2>
         <p>Free for Windows and macOS. Aonin is free software licensed under GNU GPL v3.</p>
         <div class="end-actions">
-          <a class="btn" href={RELEASES} data-download>
+          <a class="btn" href={RELEASES} data-download="closing">
             <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v8 M4.5 7 8 10.5 11.5 7 M3 13.5h10" /></svg>
             Try for free
           </a>
@@ -378,11 +378,11 @@ const next = [
         <span class="pro-tag lg">Pro</span>
         <p>Want to try Pro? Get a trial key on Discord.</p>
       </div>
-      <a class="btn discord" href={DISCORD} target="_blank" rel="noopener">
+      <a class="btn discord" href={DISCORD} target="_blank" rel="noopener" data-discord>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M19.3 5.3A16.6 16.6 0 0 0 15.2 4l-.5 1a15.4 15.4 0 0 0-5.4 0l-.5-1a16.5 16.5 0 0 0-4.1 1.3C2.1 9.2 1.4 13 1.7 16.7a16.7 16.7 0 0 0 5 2.5l1.1-1.7a10.8 10.8 0 0 1-1.7-.8l.4-.3a11.9 11.9 0 0 0 10.2 0l.4.3a10.8 10.8 0 0 1-1.7.8l1.1 1.7a16.6 16.6 0 0 0 5-2.5c.4-4.3-.7-8-3-11.4ZM8.7 14.4c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Z" /></svg>
         Get a trial key on Discord
       </a>
-      <details class="install">
+      <details class="install" data-install>
         <summary>Having trouble opening the installer?</summary>
         <p><b>Windows:</b> If SmartScreen blocks Aonin, select More info, then Run anyway.</p>
         <p><b>macOS:</b> Drag Aonin into Applications. If macOS blocks it, right-click the app and select Open.</p>
@@ -560,7 +560,8 @@ const next = [
     background: #333;
   }
 
-  .btn[disabled] {
+  .btn[disabled],
+  .btn[aria-disabled="true"] {
     opacity: 0.4;
     cursor: not-allowed;
     transform: none;
@@ -2020,6 +2021,15 @@ const next = [
   const direct = document.querySelector<HTMLAnchorElement>('[data-dl-direct]');
   const dialog = document.querySelector<HTMLDialogElement>('[data-thanks]');
 
+  // Analytics (Umami). Quietly does nothing when the tracker is blocked or not loaded.
+  const track = (name: string, data?: Record<string, string>) => {
+    try {
+      (window as unknown as { umami?: { track: (n: string, d?: object) => void } }).umami?.track(name, data);
+    } catch {}
+  };
+  let version = '';
+  let direct_ok = false;
+
   type Asset = { name: string; browser_download_url: string };
   type Release = { tag_name: string; html_url: string; assets: Asset[] };
 
@@ -2037,7 +2047,8 @@ const next = [
 
   const apply = (r: Release) => {
     const asset = os ? r.assets.find((a) => pick[os].test(a.name)) : undefined;
-    const version = r.tag_name.replace(/^v/, '');
+    version = r.tag_name.replace(/^v/, '');
+    direct_ok = !!asset;
     if (asset) {
       buttons.forEach((b) => {
         b.href = asset.browser_download_url;
@@ -2081,9 +2092,41 @@ const next = [
   load().then((r) => r && apply(r));
 
   // The download goes ahead as a normal link; the thank-you dialog opens over the page.
+  const osName = os ?? 'other';
+  let discordClicked = false;
   buttons.forEach((b) => b.addEventListener('click', () => {
-    if (dialog && !dialog.open) window.setTimeout(() => dialog.showModal(), 150);
+    track('download_click', { location: b.dataset.download || 'unknown', os: osName, version: version || 'unknown' });
+    if (!direct_ok) track('download_fallback', { os: osName });
+    if (dialog && !dialog.open) window.setTimeout(() => {
+      dialog.showModal();
+      discordClicked = false;
+      track('thanks_open', { os: osName });
+    }, 150);
   }));
+  direct?.addEventListener('click', () => track('download_retry', { os: osName }));
+  dialog?.querySelector('[data-discord]')?.addEventListener('click', () => {
+    discordClicked = true;
+    track('discord_click', { os: osName });
+  });
+  dialog?.querySelector<HTMLDetailsElement>('[data-install]')?.addEventListener('toggle', (e) => {
+    if ((e.currentTarget as HTMLDetailsElement).open) track('install_help_open', { os: osName });
+  });
+  dialog?.addEventListener('close', () => { if (!discordClicked) track('thanks_close', { os: osName }); });
   dialog?.querySelector('[data-close]')?.addEventListener('click', () => dialog.close());
   dialog?.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
+
+  // Pro demand before Purchase opens
+  document.querySelector('[data-purchase]')?.addEventListener('click', () => track('purchase_click'));
+
+  // Pricing actually seen (40% on screen), once per visit
+  const pricing = document.getElementById('pricing');
+  if (pricing && 'IntersectionObserver' in window) {
+    const seen = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        track('pricing_view');
+        seen.disconnect();
+      }
+    }, { threshold: 0.4 });
+    seen.observe(pricing);
+  }
 </script>

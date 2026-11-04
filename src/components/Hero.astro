@@ -42,8 +42,8 @@ import { acronyms, contactHref } from '../data/site';
     </p>
 
     <div class="actions">
-      <a class="btn btn--primary" href="#products">Our Products</a>
-      <a class="btn btn--secondary" href={contactHref}>Contact Us</a>
+      <a class="btn btn--primary" href="#products" data-umami-event="products_click" data-umami-event-location="hero">Our Products</a>
+      <a class="btn btn--secondary" href={contactHref} data-umami-event="contact_click" data-umami-event-location="hero">Contact Us</a>
     </div>
   </div>
 </section>

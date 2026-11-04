@@ -18,10 +18,10 @@ import { contactHref, site } from '../data/site';
         <h2 id="contact-title">Want to build something with us?</h2>
         <p>We build software, tools, and product ideas from small problems worth solving.</p>
         <div class="actions">
-          <a class="btn btn--primary" href={contactHref}>
+          <a class="btn btn--primary" href={contactHref} data-umami-event="contact_click" data-umami-event-location="contact">
             <Icon name="mail" />Contact Us
           </a>
-          <a class="btn btn--secondary" href="#products">See Our Products</a>
+          <a class="btn btn--secondary" href="#products" data-umami-event="products_click" data-umami-event-location="contact">See Our Products</a>
         </div>
       </div>
     </div>

@@ -42,7 +42,7 @@ const skyPos: Record<string, string> = {
           <div class="body">
             <div class="title-row">
               <h3>
-                <a href={p.href} {...(p.external ? { target: '_blank', rel: 'noopener' } : {})} class="stretch">
+                <a href={p.href} {...(p.external ? { target: '_blank', rel: 'noopener' } : {})} class="stretch" data-umami-event="product_open" data-umami-event-product={p.id}>
                   {p.name}
                 </a>
               </h3>

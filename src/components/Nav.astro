@@ -24,12 +24,12 @@ const links = [
 
     <ul class="links" id="nav-links">
       {links.map((l) => (
-        <li><a href={l.href}>{l.label}</a></li>
+        <li><a href={l.href} data-umami-event="nav_click" data-umami-event-target={l.label} data-umami-event-location="nav">{l.label}</a></li>
       ))}
     </ul>
 
     <div class="end">
-      <a class="btn btn--primary btn--sm" href={contactHref}>Contact Us</a>
+      <a class="btn btn--primary btn--sm" href={contactHref} data-umami-event="contact_click" data-umami-event-location="nav">Contact Us</a>
       <button class="toggle" type="button" aria-expanded="false" aria-controls="nav-links" data-nav-toggle>
         <span class="sr-only">Menu</span>
         <Icon name="menu" class="i-menu" />

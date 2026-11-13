@@ -148,7 +148,18 @@ const skyPos: Record<string, string> = {
     box-shadow: inset 0 0 0 1px rgb(214 224 255 / 0.06);
   }
 
-  /* ---------- shared SVG preview language ---------- */
+  /* ---------- shared SVG preview language ----------
+     The scenes are drawn with the site's own tokens: the same navy surfaces and hairlines as
+     the cards, the same three text levels, lavender dust for quiet highlights and the button
+     blue for the one thing that matters in each scene. Flat fills only, no gradients. */
+  .preview {
+    --pv-panel: var(--ink-2);
+    --pv-panel-back: var(--ink-1);
+    --pv-row: rgb(214 224 255 / 0.05);
+    --pv-chip: rgb(214 224 255 / 0.07);
+    --pv-danger: #e48c9b;
+  }
+
   .preview :global(.pv) {
     display: block;
     width: 100%;
@@ -161,34 +172,30 @@ const skyPos: Record<string, string> = {
     transform: scale(1.02);
   }
 
-  .preview :global(.hair) {
-    stroke: rgb(214 224 255 / 0.1);
-    stroke-width: 1;
-  }
+  .preview :global(.pv-panel) { fill: var(--pv-panel); stroke: var(--line-strong); stroke-width: 1; }
+  .preview :global(.pv-panel--back) { fill: var(--pv-panel-back); stroke: var(--line); }
+  .preview :global(.hair) { stroke: var(--line); stroke-width: 1; }
+  .preview :global(.f-row) { fill: var(--pv-row); }
+  .preview :global(.f-chip) { fill: var(--pv-chip); }
+  .preview :global(.f-blue) { fill: var(--blue); }
+  .preview :global(.f-blue-soft) { fill: rgb(74 128 255 / 0.14); }
+  .preview :global(.f-dust) { fill: var(--dust); }
+  .preview :global(.f-ink) { fill: var(--text); }
+  .preview :global(.f-text-3) { fill: var(--text-3); }
+  .preview :global(.s-line) { fill: none; stroke: var(--line-strong); stroke-width: 1; }
+  .preview :global(.s-icon) { fill: none; stroke: var(--text-2); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
 
-  /* SVG type ramp, shared by every scene */
-  .preview :global(.t) {
-    fill: var(--text-2);
-    font-size: 11px;
-    font-weight: 450;
-    letter-spacing: -0.005em;
-  }
-
+  /* Type: one family, three sizes, three levels */
+  .preview :global(.t) { fill: var(--text-2); font-size: 11px; font-weight: 500; letter-spacing: -0.005em; }
   .preview :global(.t-strong) { fill: var(--text); font-weight: 600; }
-  .preview :global(.t-body) { fill: #d3d7e6; font-weight: 500; }
-  .preview :global(.t-faint) { fill: var(--text-3); }
+  .preview :global(.t-title) { fill: var(--text); font-size: 13px; font-weight: 600; letter-spacing: -0.015em; }
+  .preview :global(.t-display) { fill: var(--text); font-size: 16px; font-weight: 650; letter-spacing: -0.03em; }
+  .preview :global(.t-meta) { fill: var(--text-3); font-size: 9.5px; }
+  .preview :global(.t-cap) { fill: var(--text-3); font-size: 8.5px; font-weight: 600; letter-spacing: 0.08em; }
   .preview :global(.t-blue) { fill: var(--blue-hi); font-weight: 600; }
-  .preview :global(.t-rose) { fill: #f0a7b4; font-weight: 600; }
-  .preview :global(.t-white) { fill: #fff; font-weight: 600; }
-  .preview :global(.t-dark) { fill: #141824; font-weight: 600; }
-  .preview :global(.t-lg) { font-size: 17px; font-weight: 650; letter-spacing: -0.03em; }
-  .preview :global(.t-md) { font-size: 14px; letter-spacing: -0.02em; }
-  .preview :global(.t-sm) { font-size: 11.5px; }
-  .preview :global(.t-xs) { font-size: 10px; }
-  .preview :global(.t-xxs) { font-size: 8.5px; }
-  .preview :global(.t-tiny) { font-size: 6.5px; }
-  .preview :global(.t-cap) { font-size: 8px; font-weight: 600; letter-spacing: 0.08em; }
-  .preview :global(.t-cb) { fill: #141824; font-size: 6px; font-weight: 800; }
+  .preview :global(.t-danger) { fill: var(--pv-danger); font-weight: 600; }
+  .preview :global(.t-on) { fill: #fff; font-weight: 600; }
+  .preview :global(.t-dark) { fill: var(--ink-0); font-weight: 600; }
 
   /* The watercolor night behind every scene ties the cards to the hero plate. */
   .preview :global(.sky) {
@@ -197,7 +204,7 @@ const skyPos: Record<string, string> = {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.55;
+    opacity: 0.4;
   }
 
   .preview::after {

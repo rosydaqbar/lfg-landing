@@ -1,89 +1,86 @@
 ---
-// LFG Tools: a Discord server sidebar with join-to-create voice rooms, and the LFG post
-// the bot keeps up to date. A new player joins the room and fills a slot. Facts from the README.
+// LFG Tools: a Discord sidebar with a join-to-create lobby, and the LFG post the bot keeps up
+// to date. A new player drops into the room and fills a slot.
 import PvDefs from './PvDefs.astro';
 import Panel from './Panel.astro';
 
 const id = 'lt';
+const tones = ['#7f8fc8', 'var(--dust)', '#6f8fb0'];
 const members = [
-  { name: 'aelita', c: '#6c7bd0', y: 128 },
-  { name: 'drew', c: '#8f81bb', y: 148 },
-  { name: 'kugel', c: '#5f8fb4', y: 168 },
+  { name: 'aelita', y: 158 },
+  { name: 'drew', y: 176 },
+  { name: 'kugel', y: 194 },
 ];
+const speaker = 'l-4 3.5 h-3 v4 h3 l4 3.5 z';
 ---
 <svg class="pv pv-lfg" viewBox="0 0 480 285" aria-hidden="true">
   <PvDefs id={id} />
 
   <!-- server sidebar -->
-  <Panel id={id} x={22} y={22} w={176} h={240} r={16} back>
-    <text x="40" y="47" class="t t-strong t-sm">LFG Squad</text>
-    <path d="M180 41 l-4 4 -4 -4" class="lt-chev" />
-    <path d="M22 60 H 198" class="hair" />
-    <text x="40" y="78" class="t t-faint t-cap">VOICE CHANNELS</text>
+  <Panel id={id} x={24} y={28} w={168} h={229} back>
+    <text x="40" y="52" class="t t-strong">LFG Squad</text>
+    <path d="M172 47 l4 4 4 -4" class="s-icon" />
+    <path d="M24 66.5 H 192" class="hair" />
+    <text x="40" y="86" class="t t-cap">VOICE CHANNELS</text>
 
     <g class="lt-lobby">
-      <rect x="32" y="86" width="156" height="24" rx="7" class="lt-lobby-bg" />
-      <path d="M48 93 l-4 3.5 h-3 v4 h3 l4 3.5 z" class="lt-spk lt-spk--blue" />
-      <text x="58" y="102" class="t t-sm t-strong">Join to Create</text>
-      <path d="M174 93 v10 M169 98 h10" class="lt-plus" />
+      <rect x="32" y="94" width="152" height="26" rx="8" class="f-blue-soft" />
+      <path d={`M48 101.5 ${speaker}`} class="lt-spk lt-spk--blue" />
+      <text x="58" y="111" class="t t-strong">Join to Create</text>
+      <path d="M172 102 v10 M167 107 h10" class="lt-plus" />
     </g>
 
-    <path d="M48 117 l-4 3.5 h-3 v4 h3 l4 3.5 z" class="lt-spk" transform="translate(0 -3)" />
-    <text x="58" y="123" class="t t-sm t-body">Ranked grind</text>
-    <text x="186" y="123" class="t t-faint t-xxs" text-anchor="end">
-      <tspan class="lt-n3">3/5</tspan>
-    </text>
-    <text x="186" y="123" class="t t-blue t-xxs lt-n4" text-anchor="end">4/5</text>
+    <path d={`M48 132.5 ${speaker}`} class="lt-spk" />
+    <text x="58" y="142" class="t t-strong">Ranked grind</text>
+    <text x="180" y="142" class="t t-meta lt-n3" text-anchor="end">3/5</text>
+    <text x="180" y="142" class="t t-meta t-blue lt-n4" text-anchor="end">4/5</text>
 
     {members.map((m, i) => (
       <g>
-        <circle cx="66" cy={m.y + 6} r="7" fill={m.c} />
-        {i === 0 && <circle cx="66" cy={m.y + 6} r="9.5" class="lt-speak" />}
-        <text x="80" y={m.y + 10} class="t t-xs t-faint">{m.name}</text>
+        <circle cx="64" cy={m.y - 3.5} r="6" style={`fill:${tones[i]}`} />
+        {i === 0 && <circle cx="64" cy={m.y - 3.5} r="8.5" class="lt-speak" />}
+        <text x="78" y={m.y} class="t t-meta">{m.name}</text>
       </g>
     ))}
     <g class="lt-you">
-      <circle cx="66" cy="194" r="7" fill="#fff" />
-      <circle cx="66" cy="194" r="9.5" class="lt-you-ring" />
-      <text x="80" y="198" class="t t-xs t-strong">you</text>
+      <circle cx="64" cy="208.5" r="6" class="f-ink" />
+      <text x="78" y="212" class="t t-meta t-strong">you</text>
     </g>
 
-    <path d="M48 213 l-4 3.5 h-3 v4 h3 l4 3.5 z" class="lt-spk" transform="translate(0 4)" />
-    <text x="58" y="227" class="t t-sm t-body">Chill corner</text>
-    <text x="186" y="227" class="t t-faint t-xxs" text-anchor="end">2</text>
+    <path d={`M48 230.5 ${speaker}`} class="lt-spk" />
+    <text x="58" y="240" class="t">Chill corner</text>
+    <text x="180" y="240" class="t t-meta" text-anchor="end">2</text>
   </Panel>
 
   <!-- the LFG post -->
-  <Panel id={id} x={206} y={58} w={256} h={176} r={14}>
-    <g transform="translate(6 0)">
-    <circle cx="222" cy="82" r="11" fill={`url(#${id}-blue)`} />
-    <path d="M216 78 h12 M216 82 h8 M216 86 h10" stroke="#fff" stroke-width="1.8" stroke-linecap="round" />
-    <text x="240" y="80" class="t t-strong t-xs">LFG Tools</text>
-    <rect x="290" y="71" width="24" height="12" rx="3" fill="#2860f0" />
-    <text x="302" y="80" class="t t-xxs t-white" text-anchor="middle">APP</text>
-    <text x="240" y="92" class="t t-faint t-xxs">Looking for group</text>
+  <Panel id={id} x={204} y={62} w={252} h={168}>
+    <circle cx="230" cy="86" r="10" class="f-blue" />
+    <path d="M225 82.5 h10 M225 86 h7 M225 89.5 h9" stroke="#fff" stroke-width="1.6" stroke-linecap="round" />
+    <text x="248" y="84" class="t t-strong">LFG Tools</text>
+    <rect x="303" y="75" width="24" height="12" rx="3" class="f-blue-soft" />
+    <text x="315" y="84" class="t t-cap t-blue" text-anchor="middle">APP</text>
+    <text x="248" y="96" class="t t-meta">Looking for group</text>
 
-    <text x="214" y="118" class="t t-strong t-md">Ranked grind</text>
-    <text x="214" y="133" class="t t-faint t-xs">Need 2 more · join the room to play</text>
+    <text x="220" y="124" class="t t-title">Ranked grind</text>
+    <text x="220" y="139" class="t t-meta lt-need2">Need 2 more · join the room to play</text>
+    <text x="220" y="139" class="t t-meta lt-need1">Need 1 more · join the room to play</text>
 
-    <g transform="translate(214 146)">
+    <g transform="translate(220 152)">
       {[0, 1, 2].map((s) => (
-        <circle cx={14 + s * 32} cy="14" r="13" fill={members[s].c} stroke="#161e35" stroke-width="2" />
+        <circle cx={12 + s * 30} cy="12" r="12" style={`fill:${tones[s]}`} />
       ))}
-      <circle cx="110" cy="14" r="12.5" class="lt-slot" />
-      <circle cx="110" cy="14" r="13" fill="#fff" class="lt-slot-you" />
-      <circle cx="142" cy="14" r="12.5" class="lt-slot" />
+      <circle cx="102" cy="12" r="11.5" class="lt-slot" />
+      <circle cx="102" cy="12" r="12" class="f-ink lt-slot-you" />
+      <circle cx="132" cy="12" r="11.5" class="lt-slot" />
     </g>
 
-    <g transform="translate(214 190)">
-      <rect width="96" height="28" rx="14" fill={`url(#${id}-blue)`} />
-      <rect x="1" y="1" width="94" height="13" rx="7" fill={`url(#${id}-shine)`} />
-      <text x="48" y="18.5" class="t t-xs t-white" text-anchor="middle">Join room</text>
+    <g transform="translate(220 188)">
+      <rect width="92" height="26" rx="8" class="f-blue" />
+      <text x="46" y="16.8" class="t t-on" text-anchor="middle">Join room</text>
     </g>
-    <g transform="translate(318 190)">
-      <rect width="72" height="28" rx="14" fill={`url(#${id}-slate)`} stroke="rgb(214 224 255 / 0.1)" />
-      <text x="36" y="18.5" class="t t-xs t-body" text-anchor="middle">My stats</text>
-    </g>
+    <g transform="translate(320 188)">
+      <rect x="0.5" y="0.5" width="79" height="25" rx="7.5" class="s-line" />
+      <text x="40" y="16.8" class="t t-strong" text-anchor="middle">My stats</text>
     </g>
   </Panel>
 </svg>
@@ -93,21 +90,9 @@ const members = [
     --loop: 6s;
   }
 
-  .lt-chev {
-    fill: none;
-    stroke: var(--text-3);
-    stroke-width: 1.5;
-    stroke-linecap: round;
-  }
-
-  .lt-lobby-bg {
-    fill: rgb(74 128 255 / 0.14);
-    stroke: rgb(110 145 255 / 0.35);
-  }
-
   .lt-plus {
     stroke: var(--blue-hi);
-    stroke-width: 1.8;
+    stroke-width: 1.6;
     stroke-linecap: round;
   }
 
@@ -121,58 +106,36 @@ const members = [
 
   .lt-speak {
     fill: none;
-    stroke: var(--blue-hi);
-    stroke-width: 1.6;
-    animation: lt-speak 1.2s ease-in-out infinite;
+    stroke: var(--dust);
+    stroke-width: 1.4;
+    animation: lt-speak 1.4s ease-in-out infinite;
   }
 
   @keyframes lt-speak {
     50% { opacity: 0.2; }
   }
 
-  /* the new player: appears in the lobby, then drops into the room */
-  .lt-lobby {
-    animation: lt-lobby var(--loop) var(--ease-out) infinite;
-  }
-
-  @keyframes lt-lobby {
-    0%, 8% { filter: none; }
-    14% { filter: brightness(1.5); }
-    24%, 100% { filter: none; }
-  }
-
+  /* the new player appears in the room, then fills the next slot */
   .lt-you {
     animation: lt-you var(--loop) var(--ease-out) infinite;
   }
 
   @keyframes lt-you {
-    0%, 22% { opacity: 0; transform: translateY(-8px); }
+    0%, 22% { opacity: 0; transform: translateY(-6px); }
     32%, 92% { opacity: 1; transform: none; }
     100% { opacity: 0; }
   }
 
-  .lt-you-ring {
-    fill: none;
-    stroke: #fff;
-    stroke-width: 1.4;
-    opacity: 0.5;
-  }
+  .lt-n3, .lt-need2 { animation: lt-before var(--loop) linear infinite; }
+  .lt-n4, .lt-need1 { animation: lt-after var(--loop) linear infinite; }
 
-  .lt-n3 {
-    animation: lt-n3 var(--loop) linear infinite;
-  }
-
-  .lt-n4 {
-    animation: lt-n4 var(--loop) linear infinite;
-  }
-
-  @keyframes lt-n3 {
+  @keyframes lt-before {
     0%, 34% { opacity: 1; }
     36%, 92% { opacity: 0; }
     100% { opacity: 1; }
   }
 
-  @keyframes lt-n4 {
+  @keyframes lt-after {
     0%, 34% { opacity: 0; }
     36%, 92% { opacity: 1; }
     100% { opacity: 0; }
@@ -180,8 +143,8 @@ const members = [
 
   .lt-slot {
     fill: none;
-    stroke: rgb(214 224 255 / 0.3);
-    stroke-width: 1.3;
+    stroke: var(--line-strong);
+    stroke-width: 1.2;
     stroke-dasharray: 3 3;
   }
 
@@ -192,7 +155,7 @@ const members = [
   }
 
   @keyframes lt-slot {
-    0%, 38% { opacity: 0; transform: scale(0.4); }
+    0%, 38% { opacity: 0; transform: scale(0.5); }
     46%, 92% { opacity: 1; transform: none; }
     100% { opacity: 0; }
   }

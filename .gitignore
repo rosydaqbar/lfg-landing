@@ -12,3 +12,9 @@ DESIGN.md
 
 # Codex copy reviews (local notes)
 *.copy-review.md
+
+# local environment (real values)
+.env
+.env.*
+!.env.example
+!.env.production

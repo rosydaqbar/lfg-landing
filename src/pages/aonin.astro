@@ -6,6 +6,7 @@ import PopoverArt from '../components/aonin/PopoverArt.astro';
 import FlowArt from '../components/aonin/FlowArt.astro';
 import UseScene from '../components/aonin/UseScene.astro';
 import appIcon from '../assets/aonin/app-icon.svg?raw';
+import { aoninCheckout } from '../data/site';
 
 // Every claim below comes from the Aonin README / app. Nothing invented.
 const steps = [
@@ -17,12 +18,12 @@ const steps = [
   {
     n: '02',
     title: 'Connect audio senders',
-    body: 'Aonin finds your computers automatically. Connect them to share their audio.',
+    body: 'Aonin automatically finds your computers so you can connect them and share their audio.',
   },
   {
     n: '03',
     title: 'Mix your audio',
-    body: 'Adjust each computer’s volume or mute it. Audio senders can hear the listener, too.',
+    body: 'Adjust or mute each computer’s audio, and hear the listener’s audio on a sending computer.',
   },
 ];
 
@@ -37,7 +38,7 @@ const quality = [
 const uses = [
   {
     kind: 'desk',
-    who: 'You, at your desk',
+    who: 'At your desk',
     title: 'PC and MacBook side by side',
     body: 'Watch something on your MacBook and hear it through the headset connected to your PC.',
   },
@@ -67,14 +68,14 @@ const RELEASES = 'https://github.com/rosydaqbar/aonin/releases/latest';
 const DISCORD = 'https://discord.gg/2cQBYaNHjC';
 const freePlan = [
   'Stream system audio and microphone audio',
-  'High-quality audio with an option for slower networks',
+  'Uncompressed audio with lower-bitrate options for slower networks',
   'Adjust volume, mute, and see audio levels for each computer',
   'Hear the listener’s audio from another computer',
   'Join private listeners with a code',
 ];
 const proPlan = [
-  { title: 'Private listeners', detail: 'Choose who can connect using a join code. Audio is encrypted.' },
-  { title: 'Make listener', detail: 'Switch which computer plays the audio without reconnecting everyone.' },
+  { title: 'Create your own listener host', detail: 'Use a join code to control who connects and keep audio encrypted.' },
+  { title: 'Quick switch listener', detail: 'Switch which computer plays the audio without reconnecting everyone.' },
   { title: 'Android and iOS apps', detail: 'Send or listen to audio from your phone.', soon: true },
 ];
 
@@ -85,21 +86,31 @@ const next = [
 ];
 ---
 <Base
-  title="Aonin · Hear every computer through one pair of headphones"
+  title="Aonin · Hear audio from every computer through one pair of headphones"
   description="Stream audio from multiple computers to one listener. Uncompressed 24-bit/48 kHz audio over your local network. Free for Windows and macOS."
 >
   <div class="page">
+    {aoninCheckout.indo && (
+      <aside class="indo-bar" data-indo hidden aria-label="Aonin Pro offer for Indonesia">
+        <span class="indo-flag" aria-hidden="true"></span>
+        <p>Aonin Pro is <b>{aoninCheckout.indo.price}</b> in Indonesia, with the {aoninCheckout.indo.code} code applied automatically at checkout.</p>
+        <a href="#pricing" data-indo-go>View Pro pricing</a>
+        <button class="indo-x" type="button" data-indo-close aria-label="Close">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8 M12 4l-8 8" /></svg>
+        </button>
+      </aside>
+    )}
     <!-- Hero -->
     <header class="stage">
       <span class="icon" set:html={appIcon} aria-hidden="true" />
 
       <h1>Aonin</h1>
-      <p class="tagline">Hear every computer on your desk through one pair of headphones.</p>
+      <p class="tagline">Hear audio from every computer on your desk through one pair of headphones.</p>
       <p class="meta">Windows &amp; macOS · local network only</p>
 
       <div class="get">
         <a class="btn" href="#pricing" data-umami-event="try_now_click">
-          Try now
+          Download Aonin
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v9 M4.5 9 8 12.5 11.5 9" /></svg>
         </a>
         <p class="dl-note" data-dl-note>Free download for Windows and macOS</p>
@@ -117,8 +128,8 @@ const next = [
         <div class="wrap">
           <div class="head" data-reveal="head">
             <p class="eyebrow">How it works</p>
-            <h2 id="how-h">Hear all your computers together.</h2>
-            <p class="lede">Install Aonin on each computer. Choose one as the listener and connect the others to it.</p>
+            <h2 id="how-h">Hear audio from all your computers at once.</h2>
+            <p class="lede">Install Aonin on each computer, then choose one as the listener and connect the others to it.</p>
           </div>
 
           <div class="flowcard" data-reveal="rise">
@@ -141,17 +152,16 @@ const next = [
       <section class="sec" aria-labelledby="feat-h">
         <div class="wrap">
           <div class="head" data-reveal="head">
-            <p class="eyebrow">Built for listening</p>
-            <h2 id="feat-h">Good sound, simple setup.</h2>
-            <p class="lede">Listen to multiple computers together without extra equipment or complicated setup.</p>
+            <p class="eyebrow">Audio from multiple computers</p>
+            <h2 id="feat-h">Hear uncompressed audio from multiple computers at once without extra audio equipment.</h2>
           </div>
 
           <div class="bento" data-reveal="rise" data-reveal-group>
             <article class="card b-quality">
               <div class="txt">
                 <p class="stat">Uncompressed</p>
-                <h3>High-quality audio</h3>
-                <p>Enjoy uncompressed audio by default, or choose a lighter option for slower networks.</p>
+                <h3>Audio quality options</h3>
+                <p>Stream uncompressed audio by default, or choose a lower bitrate for slower networks.</p>
               </div>
               <div class="vig">
                 <div class="ui">
@@ -184,7 +194,7 @@ const next = [
               </div>
               <p class="stat">15–30 ms</p>
               <h3>Listen over Wi-Fi</h3>
-              <p>Stream audio wirelessly with very little delay, even when your Wi-Fi isn’t perfect.</p>
+              <p>Stream audio over Wi-Fi with low delay, or choose a lower bitrate for weaker connections.</p>
             </article>
 
             <article class="card">
@@ -203,8 +213,8 @@ const next = [
                   </div>
                 </div>
               </div>
-              <h3>Your network only</h3>
-              <p>Audio stays on your local network. No servers or accounts needed.</p>
+              <h3>Only on your network</h3>
+              <p>Audio stays on your local network, with no external servers or accounts needed.</p>
             </article>
 
             <article class="card">
@@ -222,7 +232,7 @@ const next = [
                   </div>
                 </div>
               </div>
-              <h3>No drivers</h3>
+              <h3>No drivers needed</h3>
               <p>Works on Windows and macOS without installing extra audio drivers.</p>
             </article>
 
@@ -235,8 +245,8 @@ const next = [
                   <span class="ui-actions"><span class="ui-btn quiet">Cancel</span><span class="ui-btn primary">Join</span></span>
                 </div>
               </div>
-              <h3 class="with-tag">Private listeners <span class="pro-tag">Pro</span></h3>
-              <p>Control who connects with a join code. Your audio is encrypted.</p>
+              <h3 class="with-tag">Create your own listener host <span class="pro-tag">Pro</span></h3>
+              <p>Control who connects with a join code while keeping the audio encrypted.</p>
             </article>
           </div>
         </div>
@@ -248,7 +258,6 @@ const next = [
           <div class="head" data-reveal="head">
             <p class="eyebrow">Who it’s for</p>
             <h2 id="uc-h">For anyone using more than one computer.</h2>
-            <p class="lede">Here are a few ways you can use Aonin.</p>
           </div>
 
           <div class="uses" data-reveal="rise" data-reveal-group>
@@ -267,8 +276,7 @@ const next = [
           <ul class="more" data-reveal="rise" data-reveal-group>
             <li>Laptop on the couch, speakers at the desk</li>
             <li>A spare PC across the room</li>
-            <li>Hear the listener back</li>
-            <li class="etc">and more</li>
+            <li>Hear the listener’s audio</li>
           </ul>
         </div>
       </section>
@@ -278,8 +286,7 @@ const next = [
         <div class="wrap">
           <div class="head" data-reveal="head">
             <p class="eyebrow">Pricing</p>
-            <h2 id="price-h">Start free, upgrade when you need more.</h2>
-            <p class="lede">Stream audio between your computers for free. Pro adds more control over who connects and which computer plays the audio.</p>
+            <h2 id="price-h">Stream audio between your computers for free, or get Pro to control who connects and which computer plays the audio.</h2>
           </div>
 
           <div class="plans" data-reveal="rise" data-reveal-group>
@@ -301,11 +308,12 @@ const next = [
             <article class="card plan pro">
               <span class="pro-tag xl">Pro</span>
               <h3 class="sr-only">Aonin Pro</h3>
-              <p class="price">$5 <span>One-time purchase</span></p>
+              <p class="price"><span class="now" data-price-now>{aoninCheckout.price}</span>{aoninCheckout.discountId && <s aria-label={`Regular price ${aoninCheckout.fullPrice}`}>{aoninCheckout.fullPrice}</s>} <span>One-time purchase</span></p>
+              {aoninCheckout.discountId && <p class="launch" data-price-label>Launch price</p>}
               <p class="plan-sub">One license covers 2 computers for life, with one year of Pro updates.</p>
               <div class="buy">
-                <button class="btn" type="button" aria-disabled="true" data-purchase>Purchase</button>
-                <p class="buy-note">Coming soon</p>
+                <button class="btn" type="button" data-purchase>Purchase</button>
+                <a class="buy-note" href="#find-key" data-find-open>Already bought? Find your key</a>
               </div>
               <p class="feats-head">Also included with Pro:</p>
               <ul class="feats pro-feats">
@@ -316,38 +324,58 @@ const next = [
                   </li>
                 ))}
               </ul>
-              <p class="plan-note">Activate Pro on the listener. Other computers can connect without Pro.</p>
+              <p class="plan-note">Activate Pro on the listener, and other computers can connect without Pro.</p>
             </article>
           </div>
         </div>
       </section>
 
       <!-- Status -->
-      <section class="sec" aria-labelledby="status-h">
+      <section class="sec bp-sec" aria-labelledby="status-h">
+        <div class="bp-bg" aria-hidden="true">
+          <svg class="bp-guides" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+            <line x1="0" y1="0" x2="1440" y2="900" />
+            <line x1="1440" y1="0" x2="0" y2="900" />
+            <line x1="720" y1="0" x2="720" y2="900" />
+            <line x1="0" y1="450" x2="1440" y2="450" />
+            <circle cx="720" cy="450" r="300" />
+            <circle cx="720" cy="450" r="430" class="thin" />
+          </svg>
+        </div>
         <div class="wrap">
           <div class="head" data-reveal="head">
             <p class="eyebrow">Status</p>
-            <h2 id="status-h">Aonin is in early development.</h2>
-            <p class="lede">You can already stream audio between Windows and macOS computers on the same network.</p>
+            <h2 id="status-h">Aonin is in early development, but you can already stream audio between Windows and macOS computers on the same network.</h2>
           </div>
 
-          <div class="grid two status" data-reveal="rise" data-reveal-group>
-            <div class="card list">
-              <h3>Working today</h3>
-              <ul>
-                {done.map((d) => (
-                  <li><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2.5 7.5 5.5 10.5 11.5 3.5" /></svg><span>{d.text}{d.pro && <span class="pro-tag">Pro</span>}</span></li>
-                ))}
-              </ul>
+          <div class="bp" data-reveal="rise">
+            <div class="bp-cols">
+              <div class="bp-col done"><span class="h tl"></span><span class="h tr"></span><span class="h bl"></span><span class="h br"></span>
+                <h3><span class="bp-no">A</span>Working today</h3>
+                <ol class="bp-track">
+                  {done.map((d, i) => (
+                    <li>
+                      <span class="bp-node" aria-hidden="true"><svg viewBox="0 0 14 14"><path d="M3 7.4 5.8 10.2 11 4" /></svg></span>
+                      <span class="bp-ref" aria-hidden="true">A.{i + 1}</span>
+                      <span class="bp-text">{d.text}{d.pro && <span class="pro-tag">Pro</span>}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+              <div class="bp-col next"><span class="h tl"></span><span class="h tr"></span><span class="h bl"></span><span class="h br"></span>
+                <h3><span class="bp-no">B</span>Coming next</h3>
+                <ol class="bp-track">
+                  {next.map((n, i) => (
+                    <li>
+                      <span class="bp-node" aria-hidden="true"></span>
+                      <span class="bp-ref" aria-hidden="true">B.{i + 1}</span>
+                      <span class="bp-text">{n}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
             </div>
-            <div class="card list">
-              <h3>Coming next</h3>
-              <ul class="next">
-                {next.map((n) => (
-                  <li><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="2.5" /></svg>{n}</li>
-                ))}
-              </ul>
-            </div>
+
           </div>
         </div>
       </section>
@@ -355,8 +383,8 @@ const next = [
       <!-- Closing -->
       <section class="end" data-reveal="rise">
         <span class="icon sm" set:html={appIcon} aria-hidden="true" />
-        <h2>Try Aonin now.</h2>
-        <p>Free for Windows and macOS. Aonin is free software licensed under GNU GPL v3.</p>
+        <h2>Download Aonin.</h2>
+        <p>Aonin is free software for Windows and macOS, licensed under GNU GPL v3.</p>
         <div class="end-actions">
           <a class="btn" href={RELEASES} data-download="closing">
             <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v8 M4.5 7 8 10.5 11.5 7 M3 13.5h10" /></svg>
@@ -373,10 +401,10 @@ const next = [
       </button>
       <span class="icon xs" set:html={appIcon} aria-hidden="true" />
       <h2 id="thanks-h">Thank you for trying Aonin</h2>
-      <p>Your download should start automatically. If it doesn’t, <a href={RELEASES} data-dl-direct>click here</a>.</p>
+      <p>If your download doesn’t start automatically, <a href={RELEASES} data-dl-direct>click here</a>.</p>
       <div class="trial">
         <span class="pro-tag lg">Pro</span>
-        <p>Want to try Pro? Get a trial key on Discord.</p>
+        <p>Get a Pro trial key on Discord.</p>
       </div>
       <a class="btn discord" href={DISCORD} target="_blank" rel="noopener" data-discord>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M19.3 5.3A16.6 16.6 0 0 0 15.2 4l-.5 1a15.4 15.4 0 0 0-5.4 0l-.5-1a16.5 16.5 0 0 0-4.1 1.3C2.1 9.2 1.4 13 1.7 16.7a16.7 16.7 0 0 0 5 2.5l1.1-1.7a10.8 10.8 0 0 1-1.7-.8l.4-.3a11.9 11.9 0 0 0 10.2 0l.4.3a10.8 10.8 0 0 1-1.7.8l1.1 1.7a16.6 16.6 0 0 0 5-2.5c.4-4.3-.7-8-3-11.4ZM8.7 14.4c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Z" /></svg>
@@ -385,8 +413,76 @@ const next = [
       <details class="install" data-install>
         <summary>Having trouble opening the installer?</summary>
         <p><b>Windows:</b> If SmartScreen blocks Aonin, select More info, then Run anyway.</p>
-        <p><b>macOS:</b> Drag Aonin into Applications. If macOS blocks it, right-click the app and select Open.</p>
+        <p><b>macOS:</b> Drag Aonin into Applications, then right-click the app and select Open if macOS blocks it.</p>
       </details>
+    </dialog>
+
+    <!-- After a purchase: the license key -->
+    <dialog class="thanks bought" data-bought aria-labelledby="bought-h" aria-live="polite">
+      <button class="x" type="button" data-close aria-label="Close">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8 M12 4l-8 8" /></svg>
+      </button>
+      <div class="state" data-state="wait">
+        <span class="spinner" aria-hidden="true"></span>
+        <h2 id="bought-h">Getting your license key</h2>
+        <p>This usually takes a few seconds.</p>
+      </div>
+      <div class="state" data-state="ready" hidden>
+        <span class="pro-tag xl">Pro</span>
+        <h2>Your Aonin Pro key is ready</h2>
+        <p class="key-label">Your license key</p>
+        <div class="key">
+          <code data-key></code>
+          <button class="copy" type="button" data-copy>Copy</button>
+        </div>
+        <p class="steps-head">To unlock Pro:</p>
+        <ol class="steps">
+          <li>Open Aonin.</li>
+          <li>Select Get Pro.</li>
+          <li>Select Enter key, then paste your key.</li>
+        </ol>
+        <p>We also emailed your key.</p>
+        <p class="order">Order ID: <span data-order></span></p>
+        <a class="dl" href={RELEASES} target="_blank" rel="noopener">Download Aonin</a>
+      </div>
+      <div class="state" data-state="late" hidden>
+        <h2>Your key isn’t ready yet</h2>
+        <p>We’ll email your key when it’s ready.</p>
+        <p class="order">Order ID: <span data-order></span></p>
+        <p><a href="#find-key" data-find-open>Find your key with your order ID and email</a></p>
+      </div>
+    </dialog>
+
+    <!-- Find a key again: order ID from the Paddle receipt + checkout email -->
+    <dialog class="thanks bought" id="find-key" data-find aria-labelledby="find-h">
+      <button class="x" type="button" data-close aria-label="Close">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8 M12 4l-8 8" /></svg>
+      </button>
+      <div class="state" data-state="form">
+        <span class="pro-tag xl">Pro</span>
+        <h2 id="find-h">Find your license key</h2>
+        <p>Enter the order ID from your Paddle receipt email and the email address you used at checkout.</p>
+        <form class="find" data-find-form novalidate>
+          <label>Order ID<input name="txn" placeholder="txn_…" autocomplete="off" spellcheck="false" required /></label>
+          <label>Email<input name="email" type="email" autocomplete="email" required /></label>
+          <p class="err" data-err role="alert" hidden></p>
+          <button class="btn" type="submit" data-find-go>Find key</button>
+        </form>
+      </div>
+      <div class="state" data-state="ready" hidden>
+        <span class="pro-tag xl">Pro</span>
+        <h2>Your license key</h2>
+        <div class="key">
+          <code data-key></code>
+          <button class="copy" type="button" data-copy>Copy</button>
+        </div>
+        <p class="steps-head">To unlock Pro:</p>
+        <ol class="steps">
+          <li>Open Aonin.</li>
+          <li>Select Get Pro.</li>
+          <li>Select Enter key, then paste your key.</li>
+        </ol>
+      </div>
     </dialog>
 
     <footer class="foot">© 2026 LFG.ink</footer>
@@ -1456,6 +1552,216 @@ const next = [
     background: var(--orange);
   }
 
+  /* status: the whole section is a blueprint, after Sketch's beta page */
+  .bp-sec {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding-bottom: clamp(96px, 12vw, 180px);
+  }
+
+  .bp-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(40% 35% at 25% 30%, rgb(240 122 58 / 0.10), transparent 70%),
+      radial-gradient(40% 40% at 80% 70%, rgb(96 140 255 / 0.07), transparent 70%);
+  }
+
+  /* the grid: fine and coarse lines, fading out toward the edges */
+  .bp-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(rgb(255 255 255 / 0.075) 1px, transparent 1px) center / 120px 120px,
+      linear-gradient(90deg, rgb(255 255 255 / 0.075) 1px, transparent 1px) center / 120px 120px,
+      linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px) center / 24px 24px,
+      linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px) center / 24px 24px;
+    -webkit-mask-image: radial-gradient(70% 70% at 50% 50%, #000 30%, transparent 85%);
+            mask-image: radial-gradient(70% 70% at 50% 50%, #000 30%, transparent 85%);
+  }
+
+  /* construction lines: diagonals, centre cross and guide circles */
+  .bp-guides {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: rgb(255 255 255 / 0.08);
+    stroke-width: 1;
+    -webkit-mask-image: radial-gradient(65% 65% at 50% 50%, #000 25%, transparent 80%);
+            mask-image: radial-gradient(65% 65% at 50% 50%, #000 25%, transparent 80%);
+  }
+
+  .bp-guides .thin { stroke-dasharray: 4 6; }
+
+  .bp {
+    position: relative;
+    margin-top: clamp(8px, 2vw, 16px);
+    font-family: 'Hanken Grotesk Variable', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+
+  .bp-ref,
+  .bp-no {
+    font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', Consolas, monospace;
+  }
+
+  .bp-cols {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(20px, 3vw, 32px);
+  }
+
+  /* guides running out from the cards' edges, like a design tool's smart guides */
+  .bp-cols::before,
+  .bp-cols::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .bp-cols::before {
+    left: -100vw;
+    right: -100vw;
+    top: 0;
+    bottom: 0;
+    border-top: 1px dashed rgb(240 122 58 / 0.35);
+    border-bottom: 1px dashed rgb(240 122 58 / 0.35);
+  }
+
+  .bp-cols::after {
+    top: -160px;
+    bottom: -160px;
+    left: 0;
+    right: 0;
+    border-left: 1px dashed rgb(240 122 58 / 0.35);
+    border-right: 1px dashed rgb(240 122 58 / 0.35);
+  }
+
+  .bp-col {
+    position: relative;
+    padding: clamp(24px, 3vw, 32px);
+    border: 1px solid rgb(240 122 58 / 0.55);
+    border-radius: 2px;
+    background: rgb(22 22 22 / 0.72);
+    -webkit-backdrop-filter: blur(6px);
+            backdrop-filter: blur(6px);
+  }
+
+  .bp-col .h {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border: 1px solid var(--orange);
+    background: #151515;
+  }
+  .bp-col .h.tl { top: -4px; left: -4px; }
+  .bp-col .h.tr { top: -4px; right: -4px; }
+  .bp-col .h.bl { bottom: -4px; left: -4px; }
+  .bp-col .h.br { bottom: -4px; right: -4px; }
+
+  .bp-col h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 20px;
+    font-size: 1.0625rem;
+    font-weight: 620;
+    color: var(--ink);
+  }
+
+  .bp-no {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-2);
+  }
+
+  .bp-track {
+    position: relative;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 18px;
+  }
+
+  .bp-track::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    bottom: 10px;
+    width: 1px;
+    background: var(--green);
+    opacity: 0.55;
+  }
+
+  .next .bp-track::before {
+    background: repeating-linear-gradient(180deg, var(--ink-3) 0 5px, transparent 5px 10px);
+    opacity: 0.8;
+  }
+
+  .bp-track li {
+    position: relative;
+    display: grid;
+    grid-template-columns: 21px 34px 1fr;
+    align-items: start;
+    gap: 0 12px;
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+
+  .bp-node {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 21px;
+    height: 21px;
+    border-radius: 50%;
+    background: #1d2414;
+    border: 1px solid var(--green);
+  }
+
+  .bp-node svg {
+    width: 11px;
+    height: 11px;
+    fill: none;
+    stroke: var(--green);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .next .bp-node {
+    background: #161616;
+    border: 1px dashed var(--ink-3);
+  }
+
+  .bp-ref {
+    padding-top: 2px;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--ink-3);
+  }
+
+  .bp-text { color: var(--ink-2); }
+  .done .bp-text { color: var(--ink); }
+
+  @media (max-width: 720px) {
+    .bp-cols { grid-template-columns: 1fr; }
+  }
+
   /* status lists */
   .card.list {
     padding: 28px;
@@ -1708,6 +2014,256 @@ const next = [
 
   .end-actions .btn {
     margin-top: 30px;
+  }
+
+  .card.pro .price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 10px;
+    row-gap: 4px;
+  }
+
+  .card.pro .price span { margin-left: 0; white-space: nowrap; }
+
+  .buy { flex-wrap: wrap; }
+
+  .card .price s {
+    margin-left: 0;
+    font-size: 1.25rem;
+    font-weight: 450;
+    letter-spacing: -0.01em;
+    color: var(--ink-3);
+    text-decoration-thickness: 1.5px;
+  }
+
+  .card .launch {
+    margin-top: 10px;
+    padding: 0;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--orange, #f07a3a);
+  }
+
+  .card a.buy-note {
+    color: var(--ink-2);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    letter-spacing: 0;
+    font-size: 0.875rem;
+  }
+
+  .card a.buy-note:hover { color: var(--ink); }
+
+  .bought .state {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .bought .state[hidden] { display: none; }
+
+  .bought .spinner {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2.5px solid var(--recess);
+    border-top-color: var(--ink);
+    animation: spin 0.9s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bought .spinner { animation-duration: 3s; }
+  }
+
+  .bought .key-label,
+  .bought .steps-head {
+    margin-top: 18px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--ink-3);
+  }
+
+  .bought .key {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .bought .key code {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--recess);
+    color: var(--ink);
+    font: 13px/1.45 ui-monospace, 'SF Mono', Consolas, monospace;
+    word-break: break-all;
+    user-select: all;
+  }
+
+  .bought .copy {
+    flex: none;
+    padding: 0 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: none;
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+
+  .bought .copy:hover { background: var(--recess); }
+
+  .bought .steps {
+    display: block;
+    list-style: decimal;
+    margin: 6px 0 0;
+    padding-left: 20px;
+    color: var(--ink-2);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .bought .steps li { display: list-item; padding: 0; }
+
+  .bought .order {
+    font-size: 0.8125rem;
+    color: var(--ink-3);
+    word-break: break-all;
+  }
+
+  .bought .dl {
+    margin-top: 16px;
+    color: var(--ink);
+    font-size: 0.9375rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .find {
+    display: grid;
+    gap: 14px;
+    width: 100%;
+    margin-top: 18px;
+  }
+
+  .find label {
+    display: grid;
+    gap: 6px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--ink-3);
+  }
+
+  .find input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--recess);
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.9375rem;
+    letter-spacing: 0;
+  }
+
+  .find input:focus-visible {
+    outline: 2px solid var(--orange, #f07a3a);
+    outline-offset: 1px;
+  }
+
+  .find .err {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--orange-ink, #f39260);
+  }
+
+  .find .btn {
+    justify-self: start;
+    margin-top: 4px;
+  }
+
+  /* Indonesia promo bar */
+  .indo-bar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 10px 52px 10px 20px;
+    border-bottom: 1px solid rgb(240 122 58 / 0.4);
+    background: linear-gradient(90deg, rgb(240 122 58 / 0.16), rgb(240 122 58 / 0.06) 60%, rgb(20 20 20 / 0.9)), #161616;
+    -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+    color: var(--ink);
+    font-family: 'Hanken Grotesk Variable', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 0.9375rem;
+    animation: indo-in 0.5s var(--ease) both;
+  }
+
+  .indo-bar[hidden] { display: none; }
+
+  @keyframes indo-in { from { transform: translateY(-100%); opacity: 0; } }
+
+  @media (prefers-reduced-motion: reduce) { .indo-bar { animation: none; } }
+
+  .indo-flag {
+    flex: none;
+    width: 18px;
+    height: 12px;
+    border-radius: 2px;
+    background: linear-gradient(#e5584b 50%, #f4f4f2 50%);
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.15);
+  }
+
+  .indo-bar p { margin: 0; }
+  .indo-bar b { color: var(--orange-ink); font-weight: 650; }
+
+  .indo-bar a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    white-space: nowrap;
+  }
+
+  .indo-x {
+    position: absolute;
+    right: 12px;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 7px;
+    background: none;
+    color: var(--ink-2);
+    cursor: pointer;
+  }
+
+  .indo-x:hover { background: rgb(255 255 255 / 0.06); color: var(--ink); }
+
+  .indo-x svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+  }
+
+  @media (max-width: 640px) {
+    .indo-bar { flex-wrap: wrap; gap: 4px 10px; justify-content: flex-start; font-size: 0.875rem; }
+    .indo-flag { display: none; }
   }
 
   /* thank-you dialog, in the app's modal style */
@@ -2129,4 +2685,156 @@ const next = [
     }, { threshold: 0.4 });
     seen.observe(pricing);
   }
+</script>
+
+<script define:vars={{ checkout: aoninCheckout }}>
+  /* Purchase: Paddle's overlay checkout on this page, then the license key from
+     lfg.ink/license as soon as the payment webhook has been handled. */
+  const button = document.querySelector('[data-purchase]');
+  const dlg = document.querySelector('[data-bought]');
+  const track = (name, data) => { try { window.umami?.track(name, data); } catch {} };
+  let ready = null;
+
+  function paddle() {
+    if (ready) return ready;
+    ready = new Promise((resolve, reject) => {
+      const tag = document.createElement('script');
+      tag.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
+      tag.onload = () => {
+        if (checkout.env === 'sandbox') window.Paddle.Environment.set('sandbox');
+        window.Paddle.Initialize({
+          token: checkout.clientToken,
+          eventCallback: (e) => {
+            if (e.name === 'checkout.completed') {
+              const txn = e.data?.transaction_id;
+              track('purchase_complete');
+              window.Paddle.Checkout.close();
+              if (txn) showKey(txn);
+            }
+          },
+        });
+        resolve(window.Paddle);
+      };
+      tag.onerror = () => { ready = null; reject(new Error('Paddle did not load')); };
+      document.head.appendChild(tag);
+    });
+    return ready;
+  }
+
+  function state(name) {
+    dlg.querySelectorAll('[data-state]').forEach((el) => { el.hidden = el.dataset.state !== name; });
+  }
+
+  async function showKey(txn) {
+    dlg.querySelectorAll('[data-order]').forEach((el) => { el.textContent = txn; });
+    state('wait');
+    if (!dlg.open) dlg.showModal();
+    for (let i = 0; i < 45; i++) {
+      try {
+        const r = await fetch(`${checkout.license}/v1/order/${encodeURIComponent(txn)}`);
+        if (r.ok) {
+          const o = await r.json();
+          dlg.querySelector('[data-key]').textContent = o.key;
+          state('ready');
+          return;
+        }
+      } catch {}
+      await new Promise((r) => setTimeout(r, 2000));
+    }
+    state('late');
+  }
+
+  // Indonesia: Paddle locates the visitor (same as for tax); show the INDO price and banner.
+  let indo = false;
+  const indoBar = document.querySelector('[data-indo]');
+  async function detectIndo() {
+    if (!checkout.indo) return;
+    try {
+      const P = await paddle();
+      const r = await P.PricePreview({ items: [{ priceId: checkout.priceId, quantity: 1 }] });
+      const cc = r?.data?.address?.countryCode ?? r?.data?.address?.country_code;
+      if (cc !== 'ID') return;
+      indo = true;
+      document.querySelector('[data-price-now]').textContent = checkout.indo.price;
+      const label = document.querySelector('[data-price-label]');
+      if (label) label.textContent = 'Indonesia offer';
+      let closed = false;
+      try { closed = sessionStorage.getItem('indo-bar') === 'closed'; } catch {}
+      if (indoBar && !closed) indoBar.hidden = false;
+      track('indo_price_shown');
+    } catch {}
+  }
+  indoBar?.querySelector('[data-indo-close]')?.addEventListener('click', () => {
+    indoBar.hidden = true;
+    try { sessionStorage.setItem('indo-bar', 'closed'); } catch {}
+  });
+  if ('requestIdleCallback' in window) requestIdleCallback(detectIndo, { timeout: 2500 }); else setTimeout(detectIndo, 800);
+
+  button?.addEventListener('click', async () => {
+    track('purchase_open');
+    button.setAttribute('aria-busy', 'true');
+    try {
+      const P = await paddle();
+      P.Checkout.open({
+        items: [{ priceId: checkout.priceId, quantity: 1 }],
+        ...((indo ? checkout.indo.discountId : checkout.discountId) ? { discountId: indo ? checkout.indo.discountId : checkout.discountId } : {}),
+        settings: { displayMode: 'overlay', variant: 'one-page' },
+      });
+    } catch {
+      window.location.href = `${checkout.license}/buy`;
+    } finally {
+      button.removeAttribute('aria-busy');
+    }
+  });
+
+  dlg?.querySelector('[data-copy]')?.addEventListener('click', async (e) => {
+    const key = dlg.querySelector('[data-key]').textContent;
+    try { await navigator.clipboard.writeText(key); e.currentTarget.textContent = 'Copied'; } catch {}
+  });
+  dlg?.querySelector('[data-close]')?.addEventListener('click', () => dlg.close());
+  dlg?.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+
+  // Find a key again.
+  const find = document.querySelector('[data-find]');
+  const form = find?.querySelector('[data-find-form]');
+  const err = find?.querySelector('[data-err]');
+  const findState = (name) => find.querySelectorAll('[data-state]').forEach((el) => { el.hidden = el.dataset.state !== name; });
+  const openFind = () => {
+    if (dlg?.open) dlg.close();
+    findState('form');
+    if (!find.open) find.showModal();
+    track('findkey_open');
+  };
+  document.querySelectorAll('[data-find-open]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); openFind(); }));
+  if (location.hash === '#find-key') openFind();
+  const fail = (text) => { err.textContent = text; err.hidden = false; };
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    err.hidden = true;
+    const txn = form.txn.value.trim();
+    const email = form.email.value.trim();
+    if (!/^txn_[a-z0-9]{26}$/.test(txn)) return fail('Enter an order ID that starts with txn_. You’ll find it in your Paddle receipt email.');
+    if (!email.includes('@')) return fail('Enter the email address you used at checkout.');
+    const go = form.querySelector('[data-find-go]');
+    go.setAttribute('aria-busy', 'true');
+    try {
+      const r = await fetch(`${checkout.license}/v1/order/${encodeURIComponent(txn)}?email=${encodeURIComponent(email)}`);
+      if (r.status === 200) {
+        find.querySelector('[data-key]').textContent = (await r.json()).key;
+        findState('ready');
+        track('findkey_found');
+      } else if (r.status === 429) fail('Too many tries. Wait a few minutes, then try again.');
+      else fail('We couldn’t find a license key with those details. Check the order ID and email address, then try again.');
+    } catch {
+      fail('We couldn’t look up your license key. Try again.');
+    } finally {
+      go.removeAttribute('aria-busy');
+    }
+  });
+  find?.querySelector('[data-copy]')?.addEventListener('click', async (e) => {
+    try { await navigator.clipboard.writeText(find.querySelector('[data-key]').textContent); e.currentTarget.textContent = 'Copied'; } catch {}
+  });
+  find?.querySelector('[data-close]')?.addEventListener('click', () => find.close());
+  find?.addEventListener('click', (e) => { if (e.target === find) find.close(); });
+  find?.addEventListener('close', () => { if (location.hash === '#find-key') history.replaceState(null, '', location.pathname); });
 </script>

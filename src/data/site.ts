@@ -74,3 +74,23 @@ export const products: Product[] = [
     external: true,
   },
 ];
+
+/**
+ * Aonin Pro checkout (Paddle). Public values from PUBLIC_PADDLE_* (see
+ * .env.example); the defaults are the sandbox ones. For live, build with
+ * PUBLIC_PADDLE_ENV=production and the live_ token, price and discount.
+ */
+const env = import.meta.env;
+export const aoninCheckout = {
+  env: (env.PUBLIC_PADDLE_ENV === 'production' ? 'production' : 'sandbox') as 'sandbox' | 'production',
+  clientToken: env.PUBLIC_PADDLE_CLIENT_TOKEN ?? 'test_0a0682fa62bac58d777e6f6f8ac',
+  priceId: env.PUBLIC_PADDLE_PRICE_ID ?? 'pri_01m7sx7gaey9ybdaxwkjz4nz8s',
+  // Launch promo: 14.99 -> 10.00. Set PUBLIC_PADDLE_DISCOUNT_ID=none to sell at the full price.
+  discountId: ((v) => (v === 'none' ? null : v))(env.PUBLIC_PADDLE_DISCOUNT_ID ?? 'dsc_01m7sx7gk5dm016d1yc0m475tb') as string | null,
+  price: '$10',
+  fullPrice: '$14.99',
+  // Visitors Paddle locates in Indonesia get the INDO promo (14.99 -> 4.99) and a banner.
+  // Set PUBLIC_PADDLE_DISCOUNT_ID_INDO=none to turn it off.
+  indo: ((v) => (v === 'none' ? null : { discountId: v, code: 'INDO', price: '$4.99' }))(env.PUBLIC_PADDLE_DISCOUNT_ID_INDO ?? 'dsc_01m7tjkmsm27k83t3j4tb6tp89'),
+  license: 'https://lfg.ink/license',
+};

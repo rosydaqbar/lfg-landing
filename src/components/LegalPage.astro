@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+import { legalUpdated, type Section } from '../data/legal';
+
+interface Props { title: string; description: string; sections: Section[] }
+const { title, description, sections } = Astro.props;
+const pages = [
+  { href: '/terms', label: 'Terms' },
+  { href: '/privacy', label: 'Privacy' },
+  { href: '/refund', label: 'Refunds' },
+];
+const updated = new Date(legalUpdated + 'T00:00:00Z').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+---
+<Base title={`${title} · Aonin`} description={description}>
+  <div class="legal-bg">
+  <main class="legal">
+    <a class="back" href="/aonin">← Aonin</a>
+    <nav class="tabs" aria-label="Legal pages">
+      {pages.map((p) => <a href={p.href} aria-current={Astro.url.pathname.replace(/\/$/, '') === p.href ? 'page' : undefined}>{p.label}</a>)}
+    </nav>
+    <h1>{title}</h1>
+    <p class="updated">Last updated {updated}</p>
+    {sections.map((s) => (
+      <section>
+        <h2>{s.heading}</h2>
+        {s.body.map((para) => <p>{para}</p>)}
+      </section>
+    ))}
+    <footer class="legal-foot">© 2026 LFG.ink</footer>
+  </main>
+  </div>
+</Base>
+
+<style>
+  .legal-bg { min-height: 100vh; background: #121212; }
+  .legal {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: clamp(40px, 8vw, 96px) 20px 64px;
+    color: #ececea;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+  .back { color: #a6a6a3; text-decoration: none; font-size: 0.875rem; }
+  .back:hover { color: inherit; }
+  .tabs { display: flex; gap: 8px; margin: 28px 0 8px; flex-wrap: wrap; }
+  .tabs a {
+    padding: 6px 14px;
+    border: 1px solid rgb(255 255 255 / 0.12);
+    border-radius: 999px;
+    color: #a6a6a3;
+    text-decoration: none;
+    font-size: 0.875rem;
+  }
+  .tabs a[aria-current='page'] { color: #fff; border-color: rgb(255 255 255 / 0.4); background: rgb(255 255 255 / 0.06); }
+  h1 { margin: 24px 0 4px; font-size: clamp(2rem, 5vw, 2.75rem); line-height: 1.1; letter-spacing: -0.03em; font-weight: 650; }
+  .updated { margin: 0 0 36px; color: #7c7c79; font-size: 0.875rem; }
+  section { margin-top: 32px; }
+  h2 { margin: 0 0 8px; font-size: 1.125rem; font-weight: 620; letter-spacing: -0.01em; }
+  p { margin: 0 0 12px; color: #a6a6a3; }
+  .legal-foot { margin-top: 64px; color: #7c7c79; font-size: 0.8125rem; }
+</style>

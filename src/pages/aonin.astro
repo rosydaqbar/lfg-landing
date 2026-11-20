@@ -312,7 +312,9 @@ const next = [
               {aoninCheckout.discountId && <p class="launch" data-price-label>Launch price</p>}
               <p class="plan-sub">One license covers 2 computers for life, with one year of Pro updates.</p>
               <div class="buy">
-                <button class="btn" type="button" data-purchase>Purchase</button>
+                {aoninCheckout.checkoutOpen
+                  ? <button class="btn" type="button" data-purchase>Purchase</button>
+                  : <><button class="btn" type="button" aria-disabled="true" disabled>Purchase</button><p class="buy-note">Coming soon</p></>}
                 <a class="buy-note" href="#find-key" data-find-open>Already bought? Find your key</a>
               </div>
               <p class="feats-head">Also included with Pro:</p>
@@ -485,7 +487,7 @@ const next = [
       </div>
     </dialog>
 
-    <footer class="foot">© 2026 LFG.ink</footer>
+    <footer class="foot">© 2026 LFG.ink · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/refund">Refunds</a> · <a href="mailto:raqbars@gmail.com">Contact</a></footer>
   </div>
 </Base>
 
@@ -2416,6 +2418,9 @@ const next = [
     color: var(--ink-2);
     font-weight: 600;
   }
+
+  .foot a { color: #8a8a88; text-decoration: none; }
+  .foot a:hover { color: var(--ink); }
 
   .foot {
     padding: clamp(72px, 9vw, 112px) 20px 32px;

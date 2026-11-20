@@ -93,4 +93,6 @@ export const aoninCheckout = {
   // Set PUBLIC_PADDLE_DISCOUNT_ID_INDO=none to turn it off.
   indo: ((v) => (v === 'none' ? null : { discountId: v, code: 'INDO', price: '$4.99' }))(env.PUBLIC_PADDLE_DISCOUNT_ID_INDO ?? 'dsc_01m7tjkmsm27k83t3j4tb6tp89'),
   license: 'https://lfg.ink/license',
+  // Off until Paddle approves the live account and domain: Purchase shows Coming soon.
+  checkoutOpen: env.PUBLIC_PADDLE_CHECKOUT !== 'off',
 };

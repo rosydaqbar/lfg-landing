@@ -14,7 +14,7 @@ const updated = new Date(legalUpdated + 'T00:00:00Z').toLocaleDateString('en-US'
 <Base title={`${title} · Aonin`} description={description}>
   <div class="legal-bg">
   <main class="legal">
-    <a class="back" href="/aonin">← Aonin</a>
+    <a class="back" href="/">← Aonin</a>
     <nav class="tabs" aria-label="Legal pages">
       {pages.map((p) => <a href={p.href} aria-current={Astro.url.pathname.replace(/\/$/, '') === p.href ? 'page' : undefined}>{p.label}</a>)}
     </nav>

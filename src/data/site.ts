@@ -42,7 +42,7 @@ export const products: Product[] = [
     name: 'Aonin',
     kind: 'Windows & macOS',
     description: 'Hear every computer on your desk through one pair of headphones. Local network only: no servers, no accounts, no drivers.',
-    href: '/aonin',
+    href: 'https://aonin.lfg.ink',
     cta: 'Learn more',
     external: false,
   },
@@ -92,7 +92,7 @@ export const aoninCheckout = {
   // Visitors Paddle locates in Indonesia get the INDO promo (14.99 -> 4.99) and a banner.
   // Set PUBLIC_PADDLE_DISCOUNT_ID_INDO=none to turn it off.
   indo: ((v) => (v === 'none' ? null : { discountId: v, code: 'INDO', price: '$4.99' }))(env.PUBLIC_PADDLE_DISCOUNT_ID_INDO ?? 'dsc_01m7tjkmsm27k83t3j4tb6tp89'),
-  license: 'https://lfg.ink/license',
+  license: 'https://aonin.lfg.ink/license',
   // Off until Paddle approves the live account and domain: Purchase shows Coming soon.
   checkoutOpen: env.PUBLIC_PADDLE_CHECKOUT !== 'off',
 };

@@ -12,7 +12,7 @@ export const terms: Section[] = [
   {
     heading: 'Who we are',
     body: [
-      'These terms cover Aonin, our free app for streaming audio between computers on a local network, Aonin Pro licenses, and the license service at lfg.ink/license. In these terms, "we" and "us" mean Aonin.',
+      'These terms cover Aonin, our free app for streaming audio between computers on a local network, Aonin Pro licenses, and the license service at aonin.lfg.ink/license. In these terms, "we" and "us" mean Aonin.',
       'Our order process is conducted by our online reseller Paddle.com. Paddle.com is the Merchant of Record for all our orders. Paddle provides all customer service inquiries and handles returns.',
     ],
   },
@@ -79,7 +79,7 @@ export const privacy: Section[] = [
   {
     heading: 'This website',
     body: [
-      'lfg.ink uses Umami to count page views and button clicks without cookies.',
+      'aonin.lfg.ink and lfg.ink use Umami to count page views and button clicks without cookies.',
       'Our server processes your IP address to respond to requests and limit abuse, but we do not store IP addresses in the license database.',
     ],
   },

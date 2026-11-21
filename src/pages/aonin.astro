@@ -66,6 +66,9 @@ const done = [
 // Pricing. Facts from the Aonin README and the app's Pro screen.
 const RELEASES = 'https://github.com/rosydaqbar/aonin/releases/latest';
 const DISCORD = 'https://discord.gg/2cQBYaNHjC';
+// Product Hunt launch (post 1325620): the official dark badge, which shows the live upvote count.
+const PH_URL = 'https://www.producthunt.com/posts/aonin?utm_source=badge-featured&utm_medium=badge&utm_campaign=aonin';
+const PH_BADGE = 'https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1325620&theme=dark';
 const freePlan = [
   'Stream system audio and microphone audio',
   'Uncompressed audio with lower-bitrate options for slower networks',
@@ -112,6 +115,9 @@ const next = [
         <a class="btn" href="#pricing" data-umami-event="try_now_click">
           Download Aonin
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v9 M4.5 9 8 12.5 11.5 9" /></svg>
+        </a>
+        <a class="ph" href={PH_URL} target="_blank" rel="noopener" data-umami-event="producthunt_click_hero">
+          <img src={PH_BADGE} alt="Aonin on Product Hunt" width="250" height="54" loading="lazy" decoding="async" />
         </a>
       </div>
 
@@ -486,7 +492,12 @@ const next = [
       </div>
     </dialog>
 
-    <footer class="foot">© 2026 LFG.ink · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/refund">Refunds</a> · <a href="mailto:raqbars@gmail.com">Contact</a></footer>
+    <footer class="foot">
+      <a class="ph ph-foot" href={PH_URL} target="_blank" rel="noopener" data-umami-event="producthunt_click_footer">
+          <img src={PH_BADGE} alt="Aonin on Product Hunt" width="250" height="54" loading="lazy" decoding="async" />
+        </a>
+      <p>© 2026 LFG.ink · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/refund">Refunds</a> · <a href="mailto:raqbars@gmail.com">Contact</a></p>
+    </footer>
   </div>
 </Base>
 
@@ -665,11 +676,46 @@ const next = [
     background: var(--orange);
   }
 
-  /* hero download */
+  /* hero download, with the Product Hunt badge beside it */
   .get {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
     align-items: center;
+    gap: 12px;
+    margin-top: 34px;
+  }
+
+  .get .btn {
+    margin-top: 0;
+  }
+
+  .ph {
+    display: inline-flex;
+    border-radius: 10px;
+    transition: transform 200ms var(--ease), opacity 120ms var(--ease);
+  }
+
+  .ph img {
+    display: block;
+    width: auto;
+    height: 44px;
+  }
+
+  .ph:hover {
+    transform: translateY(-1px);
+  }
+
+  .ph-foot {
+    margin-bottom: 18px;
+  }
+
+  .ph-foot img {
+    height: 40px;
+  }
+
+  .foot p {
+    margin: 0;
   }
 
   .dl-note {
